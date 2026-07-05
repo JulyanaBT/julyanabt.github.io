@@ -3,463 +3,468 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jul'Yana Beach Tennis</title>
+<title>Jul'Yana BT</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
 
 :root{
   --green:#007a3d;
-  --green-dark:#005b32;
+  --green-dark:#003f2f;
   --yellow:#ffd100;
   --sky:#27bced;
   --clay:#c65a1e;
-  --navy:#063b72;
-  --text:#102015;
+  --orange:#ff6b00;
+  --navy:#06284a;
   --white:#fff;
+  --glass:rgba(255,255,255,.12);
 }
 
 body{
   min-height:100vh;
   background:
-    radial-gradient(circle at top left, rgba(39,188,237,.42), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(255,209,0,.68), transparent 34%),
-    linear-gradient(135deg,var(--green-dark) 0%,var(--green) 58%,var(--yellow) 100%);
-  color:var(--text);
+    radial-gradient(circle at 15% 10%, rgba(39,188,237,.36), transparent 28%),
+    radial-gradient(circle at 95% 75%, rgba(255,209,0,.78), transparent 32%),
+    linear-gradient(135deg,#002f29 0%,#006b3f 52%,#009e60 100%);
+  color:white;
   overflow-x:hidden;
 }
 
 .page{
   min-height:100svh;
-  max-width:1180px;
+  max-width:1240px;
   margin:auto;
-  padding:18px 20px 12px;
+  padding:18px 22px 12px;
   display:flex;
   flex-direction:column;
   justify-content:center;
   position:relative;
 }
 
-.watermark{
+.page::before{
+  content:"";
   position:absolute;
-  right:-35px;
-  top:60px;
-  width:360px;
-  opacity:.08;
+  inset:0;
+  background:
+    linear-gradient(120deg,rgba(255,255,255,.05),transparent 35%),
+    radial-gradient(circle at bottom left,rgba(0,0,0,.28),transparent 42%);
   pointer-events:none;
 }
 
-.hero{
-  color:white;
+.watermark{
+  position:absolute;
+  right:40px;
+  top:60px;
+  width:410px;
+  opacity:.07;
+  pointer-events:none;
+}
+
+.topnav{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:flex-end;
+  gap:26px;
   margin-bottom:16px;
+  font-size:13px;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.topnav a{
+  color:white;
+  text-decoration:none;
+  opacity:.88;
+}
+
+.topnav a.active{
+  color:var(--yellow);
+}
+
+.hero-grid{
   position:relative;
   z-index:1;
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:34px;
+  align-items:center;
+}
+
+.brand{
+  min-width:0;
 }
 
 .logo-desktop{
-  width:min(420px,48vw);
+  width:min(520px,45vw);
   display:block;
-  margin-bottom:10px;
-  filter:drop-shadow(0 14px 28px rgba(0,0,0,.28));
+  margin-bottom:18px;
+  filter:drop-shadow(0 18px 30px rgba(0,0,0,.32));
 }
 
-.logo-mobile{
-  display:none;
-}
-
-.kicker{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  padding:7px 13px;
-  border-radius:999px;
-  background:rgba(255,255,255,.18);
-  backdrop-filter:blur(8px);
-  font-size:13px;
-  font-weight:950;
-  margin-bottom:9px;
-}
-
-.kicker span{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  display:inline-block;
-}
-
-.sky{background:var(--sky);}
-.clay{background:var(--clay);}
-.yellow{background:var(--yellow);}
+.logo-mobile{display:none;}
 
 h1{
-  font-size:clamp(38px,5.2vw,62px);
-  line-height:.92;
+  font-size:clamp(54px,6.2vw,82px);
+  line-height:.88;
   font-weight:1000;
-  letter-spacing:-.06em;
-  color:white;
-  text-shadow:0 8px 26px rgba(0,0,0,.30);
+  letter-spacing:-.07em;
+  text-shadow:0 10px 30px rgba(0,0,0,.35);
 }
 
-.subtitle{
-  margin-top:8px;
-  font-size:clamp(18px,2vw,25px);
-  font-weight:900;
-  color:white;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1.25fr .85fr;
-  gap:18px;
-  position:relative;
-  z-index:1;
-}
-
-.card{
-  background:rgba(255,255,255,.96);
-  border-radius:28px;
-  padding:24px;
-  box-shadow:0 20px 48px rgba(0,0,0,.22);
-  border:1px solid rgba(255,255,255,.65);
-}
-
-.card h2{
-  color:var(--navy);
-  font-size:clamp(24px,2.7vw,32px);
-  margin-bottom:10px;
-  letter-spacing:-.04em;
-}
-
-.card p{
-  font-size:16px;
-  line-height:1.38;
-  margin-bottom:10px;
-}
-
-.event-main{
-  margin:13px 0;
-  padding:15px;
-  border-radius:21px;
-  background:
-    linear-gradient(135deg,rgba(39,188,237,.16),rgba(255,209,0,.16)),
-    #fbfff7;
-  border:2px solid rgba(39,188,237,.25);
-}
-
-.event-label{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:999px;
-  background:var(--clay);
-  color:white;
-  font-size:12px;
-  font-weight:1000;
-  margin-bottom:8px;
-}
-
-.event-title{
-  font-size:23px;
-  font-weight:1000;
-  color:var(--navy);
+.slogan{
+  margin-top:12px;
+  max-width:650px;
+  font-size:clamp(24px,3vw,40px);
   line-height:1.05;
+  color:var(--yellow);
+  font-style:italic;
+  font-weight:850;
+  text-shadow:0 8px 22px rgba(0,0,0,.28);
 }
 
-.event-date{
-  margin-top:5px;
-  font-size:15px;
-  font-weight:900;
-  color:var(--green);
-}
-
-.event{
-  margin:8px 0;
-  padding:11px 14px;
-  border-radius:16px;
-  background:#fbfff7;
-  border-left:6px solid var(--sky);
-  font-size:16px;
+.baseline{
+  margin-top:20px;
+  font-size:clamp(19px,2vw,27px);
   font-weight:950;
 }
 
-.event.past{
-  border-left-color:var(--yellow);
+.services{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  font-size:18px;
+  font-weight:900;
 }
+
+.services span:nth-child(1){color:white;}
+.services span:nth-child(2){color:var(--yellow);}
+.services span:nth-child(3){color:var(--sky);}
+.services span:nth-child(4){color:var(--clay);}
+.services span:nth-child(5){color:white;}
 
 .actions{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
-  margin-top:13px;
+  gap:14px;
+  margin-top:28px;
 }
 
 .btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:13px 21px;
+  gap:10px;
+  padding:16px 24px;
   border-radius:999px;
-  background:var(--green);
   color:white;
   text-decoration:none;
   font-weight:1000;
-  box-shadow:0 10px 22px rgba(0,122,61,.32);
+  background:linear-gradient(135deg,var(--orange),var(--clay));
+  box-shadow:0 16px 34px rgba(198,90,30,.35);
 }
 
 .btn.secondary{
-  background:var(--yellow);
-  color:var(--text);
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(39,188,237,.65);
+  box-shadow:none;
 }
 
-.btn.orange{
-  background:var(--clay);
-  color:white;
-}
-
-.details{
-  display:grid;
-  gap:9px;
-  margin-top:12px;
-}
-
-details{
-  background:#f8fafc;
-  border-radius:17px;
-  padding:12px 14px;
-  border:1px solid rgba(16,24,40,.08);
-}
-
-summary{
-  cursor:pointer;
-  font-size:15px;
-  font-weight:1000;
+.event-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:34px;
+  padding:28px;
+  min-height:430px;
+  background:
+    linear-gradient(135deg,rgba(6,40,74,.18),rgba(0,0,0,.18)),
+    linear-gradient(145deg,rgba(255,255,255,.97),rgba(255,255,255,.82));
   color:var(--navy);
-  list-style:none;
+  box-shadow:0 26px 70px rgba(0,0,0,.36);
+  border:2px solid rgba(39,188,237,.48);
 }
 
-summary::-webkit-details-marker{display:none;}
+.event-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 85% 18%,rgba(255,209,0,.38),transparent 25%),
+    radial-gradient(circle at 10% 90%,rgba(39,188,237,.28),transparent 28%);
+  pointer-events:none;
+}
 
-summary::after{
-  content:"+";
-  float:right;
+.event-card::after{
+  content:"BT";
+  position:absolute;
+  right:18px;
+  bottom:-18px;
+  font-size:150px;
   font-weight:1000;
-  color:var(--clay);
+  color:rgba(6,40,74,.045);
+  letter-spacing:-.08em;
 }
 
-details[open] summary::after{content:"–";}
-
-.details-content{
-  margin-top:9px;
-}
-
-.footer{
-  text-align:center;
-  color:white;
-  padding-top:12px;
-  font-weight:750;
-  opacity:.95;
-  font-size:13px;
+.event-content{
   position:relative;
   z-index:1;
 }
 
-/* TABLETTE */
-@media(min-width:761px) and (max-width:980px){
-  .page{
-    justify-content:flex-start;
-    padding-top:20px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .logo-desktop{
-    width:min(380px,58vw);
-  }
+.event-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:linear-gradient(135deg,var(--sky),#08a6d8);
+  color:white;
+  padding:9px 14px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:1000;
+  text-transform:uppercase;
 }
 
-/* MOBILE */
-@media(max-width:760px){
-  body{
-    overflow:hidden;
-  }
+.event-tour{
+  margin-top:28px;
+  display:inline-block;
+  padding:8px 13px;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--orange),var(--clay));
+  color:white;
+  font-size:13px;
+  font-weight:1000;
+  text-transform:uppercase;
+}
+
+.event-title{
+  margin-top:14px;
+  font-size:clamp(42px,5vw,68px);
+  line-height:.85;
+  font-weight:1000;
+  letter-spacing:-.06em;
+}
+
+.event-subtitle{
+  margin-top:8px;
+  font-size:34px;
+  line-height:1;
+  color:var(--clay);
+  font-style:italic;
+  font-weight:850;
+}
+
+.event-info{
+  margin-top:28px;
+  display:grid;
+  gap:12px;
+  font-size:18px;
+  font-weight:950;
+}
+
+.event-info div{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.event-card .btn{
+  margin-top:26px;
+  padding:15px 26px;
+}
+
+.pillars{
+  position:relative;
+  z-index:1;
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.pillar{
+  padding:16px;
+  border-radius:22px;
+  background:rgba(0,0,0,.22);
+  border:1px solid rgba(39,188,237,.28);
+  backdrop-filter:blur(10px);
+}
+
+.pillar strong{
+  display:block;
+  color:var(--yellow);
+  font-size:15px;
+  margin-bottom:4px;
+}
+
+.pillar span{
+  display:block;
+  font-size:13px;
+  font-weight:750;
+  opacity:.92;
+}
+
+.mobile-details{display:none;}
+
+.footer{
+  position:relative;
+  z-index:1;
+  margin-top:12px;
+  text-align:center;
+  font-size:13px;
+  font-weight:750;
+  opacity:.88;
+}
+
+@media(max-width:900px){
+  body{overflow:hidden;}
 
   .page{
     height:100svh;
     min-height:100svh;
-    padding:10px 12px 8px;
+    padding:12px 14px 9px;
     justify-content:flex-start;
   }
 
-  .watermark{
+  .topnav,.watermark,.pillars{
     display:none;
   }
 
-  .hero{
+  .hero-grid{
+    display:block;
+  }
+
+  .brand{
     text-align:center;
-    margin-bottom:8px;
   }
 
-  .logo-desktop{
-    display:none;
-  }
+  .logo-desktop{display:none;}
 
   .logo-mobile{
     display:block;
-    width:min(145px,42vw);
-    margin:0 auto 6px;
-    filter:drop-shadow(0 9px 18px rgba(0,0,0,.25));
-  }
-
-  .kicker{
-    font-size:10.5px;
-    padding:5px 9px;
-    margin-bottom:6px;
-    gap:5px;
-  }
-
-  .kicker span{
-    width:7px;
-    height:7px;
+    width:min(250px,58vw);
+    margin:0 auto 8px;
+    filter:drop-shadow(0 12px 24px rgba(0,0,0,.35));
   }
 
   h1{
-    font-size:28px;
-    line-height:.94;
+    font-size:40px;
+    line-height:.9;
   }
 
-  .subtitle{
-    margin-top:5px;
-    font-size:13.5px;
-    font-weight:850;
+  .slogan{
+    margin:8px auto 0;
+    font-size:23px;
+    line-height:1.02;
+    max-width:340px;
   }
 
-  .grid{
-    grid-template-columns:1fr;
-    gap:8px;
+  .baseline{
+    margin-top:10px;
+    font-size:16px;
+    line-height:1.2;
   }
 
-  .card{
-    border-radius:21px;
-    padding:12px;
-  }
-
-  .card h2{
-    font-size:19px;
-    margin-bottom:6px;
-  }
-
-  .card p{
-    font-size:12.5px;
-    line-height:1.25;
-    margin-bottom:6px;
-  }
-
-  .event-main{
-    margin:7px 0;
-    padding:11px;
-    border-radius:17px;
-  }
-
-  .event-label{
-    font-size:9.8px;
-    padding:4px 8px;
-    margin-bottom:5px;
-  }
-
-  .event-title{
-    font-size:18px;
-  }
-
-  .event-date{
-    font-size:12.5px;
-    margin-top:3px;
-  }
-
-  .actions{
-    margin-top:8px;
-  }
-
-  .btn{
-    flex:1;
-    padding:10px 12px;
-    font-size:12.5px;
-  }
-
-  .desktop-card{
+  .services,.actions.desktop-actions{
     display:none;
   }
 
-  .details{
-    margin-top:8px;
-    gap:6px;
+  .event-card{
+    margin-top:14px;
+    border-radius:25px;
+    padding:18px;
+    min-height:auto;
+  }
+
+  .event-kicker{
+    font-size:11px;
+    padding:7px 11px;
+  }
+
+  .event-tour{
+    margin-top:16px;
+    font-size:11px;
+    padding:7px 10px;
+  }
+
+  .event-title{
+    margin-top:10px;
+    font-size:39px;
+  }
+
+  .event-subtitle{
+    font-size:25px;
+  }
+
+  .event-info{
+    margin-top:17px;
+    gap:8px;
+    font-size:14px;
+  }
+
+  .event-card .btn{
+    width:100%;
+    margin-top:16px;
+    padding:14px 18px;
+    font-size:15px;
+  }
+
+  .mobile-details{
+    display:grid;
+    gap:8px;
+    margin-top:10px;
   }
 
   details{
-    padding:9px 11px;
-    border-radius:14px;
+    background:rgba(255,255,255,.95);
+    color:var(--navy);
+    border-radius:18px;
+    padding:12px 14px;
+    font-weight:1000;
   }
 
   summary{
-    font-size:13px;
+    list-style:none;
+    cursor:pointer;
   }
+
+  summary::-webkit-details-marker{display:none;}
+
+  summary::after{
+    content:"+";
+    float:right;
+    color:var(--clay);
+  }
+
+  details[open] summary::after{content:"–";}
 
   .details-content{
-    margin-top:7px;
-  }
-
-  .event{
-    font-size:12.5px;
-    padding:8px 10px;
-    margin:6px 0;
-    border-radius:13px;
+    margin-top:8px;
+    font-size:13px;
+    font-weight:850;
   }
 
   .footer{
     margin-top:auto;
-    padding-top:6px;
-    font-size:10.5px;
-    line-height:1.15;
+    font-size:11px;
+    line-height:1.2;
   }
 }
 
-/* DESKTOP BAS EN HAUTEUR */
-@media(max-height:760px) and (min-width:981px){
-  .page{
-    padding-top:12px;
-    padding-bottom:8px;
-  }
-
-  .logo-desktop{
-    width:340px;
-    margin-bottom:8px;
-  }
-
-  .hero{
-    margin-bottom:12px;
-  }
-
-  h1{
-    font-size:50px;
-  }
-
-  .subtitle{
-    font-size:21px;
-  }
-
-  .card{
-    padding:20px;
-  }
-
-  .event-main{
-    margin:10px 0;
-    padding:13px;
-  }
-
-  .footer{
-    padding-top:8px;
-    font-size:12px;
-  }
+@media(max-height:760px) and (min-width:901px){
+  .page{padding-top:10px;padding-bottom:8px;}
+  .topnav{margin-bottom:8px;}
+  .logo-desktop{width:430px;margin-bottom:12px;}
+  h1{font-size:62px;}
+  .slogan{font-size:30px;margin-top:8px;}
+  .baseline{font-size:22px;margin-top:14px;}
+  .actions{margin-top:20px;}
+  .event-card{min-height:370px;padding:24px;}
+  .event-title{font-size:54px;}
+  .event-subtitle{font-size:28px;}
+  .event-info{margin-top:20px;font-size:16px;}
+  .pillars{margin-top:14px;}
+  .pillar{padding:13px;}
 }
 </style>
 </head>
@@ -470,76 +475,112 @@ details[open] summary::after{content:"–";}
 
   <img class="watermark" src="assets/img/logo-julyana-watermark-symbol.png" alt="">
 
-  <section class="hero">
-    <img class="logo-desktop" src="assets/img/logo-julyana-hero-wide.png" alt="Logo Jul'Yana Beach Tennis">
-    <img class="logo-mobile" src="assets/img/logo-julyana-mobile.png" alt="Logo Jul'Yana Beach Tennis">
+  <nav class="topnav">
+    <a href="#" class="active">Accueil</a>
+    <a href="#events">Événements</a>
+    <a href="https://julyanabt.github.io/suzini-bt-summer/index.html">Summer Tour</a>
+    <a href="mailto:contact@julyanabt.fr">Contact</a>
+  </nav>
 
-    <div class="kicker">
-      <span class="sky"></span>
-      <span class="clay"></span>
-      <span class="yellow"></span>
-      Beach Tennis • Guyane
-    </div>
+  <main class="hero-grid">
 
-    <h1>Jul'Yana Beach Tennis</h1>
+    <section class="brand">
+      <img class="logo-desktop" src="assets/img/logo-julyana-hero-wide.png" alt="Logo Jul'Yana BT">
+      <img class="logo-mobile" src="assets/img/logo-julyana-mobile.png" alt="Logo Jul'Yana BT">
 
-    <div class="subtitle">Organisation d’événements Beach Tennis</div>
-  </section>
+      <h1>Jul'Yana BT</h1>
 
-  <main class="grid">
-
-    <section class="card">
-      <h2>☀️ Prochain événement ☀️</h2>
-      <p>Le rendez-vous beach tennis de l’été au Tennis Club de Suzini.</p>
-
-      <div class="event-main">
-        <div class="event-label">Summer Tour</div>
-        <div class="event-title">BT250 Double Mixte</div>
-        <div class="event-date">Jeudi 09 juillet 2026 • TC Suzini</div>
+      <div class="slogan">
+        Née en Guyane.<br>
+        Pensée pour tous les passionnés de Beach Tennis.
       </div>
 
-      <div class="actions">
-        <a class="btn orange" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
-          Voir / s’inscrire
+      <div class="baseline">
+        Organisation d’événements Beach Tennis
+      </div>
+
+      <div class="services">
+        <span>Tournois</span>
+        <span>•</span>
+        <span>Inscriptions</span>
+        <span>•</span>
+        <span>Animations</span>
+      </div>
+
+      <div class="actions desktop-actions">
+        <a class="btn" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+          Découvrir les événements →
         </a>
-      </div>
-
-      <div class="details">
-        <details>
-          <summary>Événements à venir</summary>
-          <div class="details-content">
-            <div class="event">09 juillet — BT250 Double Mixte</div>
-            <div class="event">16 juillet — BT250 Double Mixte</div>
-          </div>
-        </details>
-
-        <details>
-          <summary>Événements passés</summary>
-          <div class="details-content">
-            <div class="event past">02 juillet — Americano</div>
-            <div class="event past">Open TSCK Juin 2026</div>
-          </div>
-        </details>
+        <a class="btn secondary" href="#events">
+          Voir le prochain événement →
+        </a>
       </div>
     </section>
 
-    <section class="card desktop-card">
-      <h2>🏆 Événement réalisé</h2>
-      <p>
-        <strong>Open TSCK Juin 2026</strong><br>
-        Résultats, programmation et informations du tournoi.
-      </p>
+    <section class="event-card" id="events">
+      <div class="event-content">
+        <div class="event-kicker">⭐ Prochain événement</div>
 
-      <a class="btn secondary" href="https://julyanabt.github.io/tsck-open-juin-2026/">
-        Voir le TSCK
-      </a>
+        <div class="event-tour">Summer Tour</div>
+
+        <div class="event-title">BT250</div>
+        <div class="event-subtitle">Double Mixte</div>
+
+        <div class="event-info">
+          <div>📅 Jeudi 09 juillet 2026</div>
+          <div>📍 Tennis Club de Suzini</div>
+        </div>
+
+        <a class="btn" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+          Voir / s’inscrire →
+        </a>
+      </div>
     </section>
 
   </main>
 
+  <section class="mobile-details">
+    <details>
+      <summary>Événements à venir</summary>
+      <div class="details-content">
+        09 juillet — BT250 Double Mixte<br>
+        16 juillet — BT250 Double Mixte
+      </div>
+    </details>
+
+    <details>
+      <summary>Événements passés</summary>
+      <div class="details-content">
+        02 juillet — Americano<br>
+        Open TSCK Juin 2026
+      </div>
+    </details>
+  </section>
+
+  <section class="pillars">
+    <div class="pillar">
+      <strong>Événements</strong>
+      <span>Tournois homologués FFT & ITF</span>
+    </div>
+
+    <div class="pillar">
+      <strong>Inscriptions</strong>
+      <span>Une plateforme simple et rapide</span>
+    </div>
+
+    <div class="pillar">
+      <strong>Animations</strong>
+      <span>Americano • Initiations • Entreprises</span>
+    </div>
+
+    <div class="pillar">
+      <strong>Accompagnement</strong>
+      <span>Clubs • Ligues • Collectivités</span>
+    </div>
+  </section>
+
   <footer class="footer">
-    © Jul'Yana Beach Tennis • Guyane française<br>
-    Application mobile en préparation
+    © Jul'Yana BT • Application mobile en préparation
   </footer>
 
 </div>
