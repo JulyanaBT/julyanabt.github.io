@@ -6,32 +6,23 @@
 <title>Jul'Yana BT</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
 
 :root{
   --green:#007a3d;
-  --green-dark:#003f2f;
   --yellow:#ffd100;
   --sky:#27bced;
   --clay:#c65a1e;
   --orange:#ff6b00;
   --navy:#06284a;
-  --white:#ffffff;
-  --black:#0d1b1a;
+  --white:#fff;
 }
 
-html{
-  scroll-behavior:smooth;
-}
+html{scroll-behavior:smooth;}
 
 body{
   min-height:100vh;
-  color:var(--white);
+  color:white;
   background:#003f2f;
   overflow-x:hidden;
 }
@@ -42,7 +33,7 @@ body::before{
   inset:0;
   z-index:-3;
   background:
-    linear-gradient(135deg,rgba(0,35,28,.86),rgba(0,85,52,.72)),
+    linear-gradient(135deg,rgba(0,35,28,.84),rgba(0,85,52,.70)),
     url("assets/img/background-brand.png") center/cover no-repeat;
 }
 
@@ -52,10 +43,9 @@ body::after{
   inset:0;
   z-index:-2;
   background:
-    radial-gradient(circle at 12% 12%,rgba(39,188,237,.32),transparent 28%),
-    radial-gradient(circle at 100% 76%,rgba(255,209,0,.75),transparent 32%),
-    linear-gradient(120deg,rgba(0,0,0,.38),transparent 46%);
-  pointer-events:none;
+    radial-gradient(circle at 12% 12%,rgba(39,188,237,.30),transparent 28%),
+    radial-gradient(circle at 100% 76%,rgba(255,209,0,.76),transparent 32%),
+    linear-gradient(120deg,rgba(0,0,0,.34),transparent 46%);
 }
 
 .page{
@@ -66,25 +56,11 @@ body::after{
   display:flex;
   flex-direction:column;
   justify-content:center;
-  position:relative;
-}
-
-.watermark{
-  position:absolute;
-  right:8%;
-  top:10%;
-  width:360px;
-  opacity:.08;
-  pointer-events:none;
-  filter:drop-shadow(0 20px 40px rgba(0,0,0,.3));
 }
 
 .topnav{
-  position:relative;
-  z-index:5;
   display:flex;
   justify-content:flex-end;
-  align-items:center;
   gap:26px;
   margin-bottom:18px;
   font-size:13px;
@@ -97,70 +73,42 @@ body::after{
   color:white;
   text-decoration:none;
   opacity:.88;
-  position:relative;
 }
 
 .topnav a.active{
   color:var(--yellow);
 }
 
-.topnav a.active::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:-7px;
-  height:2px;
-  background:linear-gradient(90deg,var(--yellow),transparent);
-}
-
 .hero-grid{
-  position:relative;
-  z-index:2;
   display:grid;
   grid-template-columns:1.02fr .98fr;
   gap:38px;
   align-items:center;
 }
 
-.brand{
-  min-width:0;
-}
-
 .logo-desktop{
   width:min(560px,46vw);
   display:block;
-  margin-bottom:20px;
+  margin-bottom:22px;
   filter:drop-shadow(0 20px 34px rgba(0,0,0,.35));
 }
 
-.logo-mobile{
-  display:none;
-}
-
-h1{
-  font-size:clamp(56px,6.2vw,84px);
-  line-height:.88;
-  font-weight:1000;
-  letter-spacing:-.075em;
-  text-shadow:0 12px 30px rgba(0,0,0,.38);
-}
+.logo-mobile{display:none;}
 
 .slogan{
-  margin-top:14px;
   max-width:660px;
-  font-size:clamp(25px,3vw,40px);
-  line-height:1.03;
+  font-size:clamp(34px,4vw,54px);
+  line-height:1.02;
   color:var(--yellow);
   font-style:italic;
-  font-weight:850;
-  text-shadow:0 8px 24px rgba(0,0,0,.32);
+  font-weight:950;
+  text-shadow:0 10px 28px rgba(0,0,0,.35);
 }
 
 .baseline{
-  margin-top:20px;
-  font-size:clamp(19px,2vw,27px);
-  font-weight:950;
+  margin-top:18px;
+  font-size:clamp(20px,2vw,28px);
+  font-weight:1000;
 }
 
 .services{
@@ -174,7 +122,6 @@ h1{
 
 .services .yellow{color:var(--yellow);}
 .services .sky{color:var(--sky);}
-.services .clay{color:var(--clay);}
 
 .actions{
   display:flex;
@@ -198,16 +145,10 @@ h1{
   background:linear-gradient(135deg,var(--orange),var(--clay));
   box-shadow:0 16px 34px rgba(198,90,30,.36);
   border:1px solid rgba(255,255,255,.18);
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 20px 42px rgba(198,90,30,.44);
 }
 
 .btn.secondary{
-  background:rgba(0,0,0,.18);
+  background:rgba(0,0,0,.20);
   border:1px solid rgba(39,188,237,.72);
   box-shadow:0 12px 26px rgba(0,0,0,.16);
   backdrop-filter:blur(12px);
@@ -217,10 +158,10 @@ h1{
   position:relative;
   overflow:hidden;
   border-radius:36px;
-  min-height:460px;
+  min-height:470px;
   padding:30px;
-  box-shadow:0 30px 78px rgba(0,0,0,.40);
-  border:2px solid rgba(39,188,237,.48);
+  box-shadow:0 30px 78px rgba(0,0,0,.42);
+  border:2px solid rgba(39,188,237,.62);
   background:#071d1d;
 }
 
@@ -229,9 +170,8 @@ h1{
   position:absolute;
   inset:0;
   background:
-    linear-gradient(90deg,rgba(0,31,35,.94),rgba(0,31,35,.55) 48%,rgba(0,31,35,.20)),
+    linear-gradient(90deg,rgba(0,31,35,.90),rgba(0,31,35,.36) 48%,rgba(0,31,35,.08)),
     url("assets/img/hero-summer-tour.png") center/cover no-repeat;
-  transform:scale(1.02);
 }
 
 .event-card::after{
@@ -239,61 +179,54 @@ h1{
   position:absolute;
   inset:0;
   background:
-    radial-gradient(circle at 20% 16%,rgba(39,188,237,.32),transparent 28%),
-    radial-gradient(circle at 100% 80%,rgba(255,209,0,.34),transparent 30%);
-  pointer-events:none;
+    radial-gradient(circle at 20% 16%,rgba(39,188,237,.30),transparent 28%),
+    radial-gradient(circle at 100% 80%,rgba(255,209,0,.28),transparent 30%);
 }
 
 .event-content{
   position:relative;
   z-index:1;
-  max-width:380px;
+  max-width:390px;
 }
 
-.event-kicker{
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.badge{
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  background:linear-gradient(135deg,var(--sky),#08a6d8);
-  color:white;
   padding:9px 14px;
   border-radius:999px;
   font-size:13px;
   font-weight:1000;
   text-transform:uppercase;
-  box-shadow:0 10px 22px rgba(39,188,237,.28);
+  color:white;
 }
 
-.event-tour{
-  margin-top:30px;
-  display:inline-block;
-  padding:8px 13px;
-  border-radius:999px;
-  background:linear-gradient(135deg,var(--orange),var(--clay));
-  color:white;
-  font-size:13px;
-  font-weight:1000;
-  text-transform:uppercase;
-}
+.badge.sky{background:linear-gradient(135deg,var(--sky),#08a6d8);}
+.badge.orange{background:linear-gradient(135deg,var(--orange),var(--clay));}
 
 .event-title{
-  margin-top:14px;
-  font-size:clamp(48px,5.5vw,76px);
+  margin-top:28px;
+  font-size:clamp(54px,5.8vw,82px);
   line-height:.82;
   font-weight:1000;
   letter-spacing:-.07em;
   color:white;
-  text-shadow:0 10px 28px rgba(0,0,0,.45);
+  text-shadow:0 10px 28px rgba(0,0,0,.48);
 }
 
 .event-subtitle{
   margin-top:8px;
-  font-size:34px;
+  font-size:36px;
   line-height:1;
   color:var(--yellow);
   font-style:italic;
-  font-weight:850;
-  text-shadow:0 8px 20px rgba(0,0,0,.42);
+  font-weight:900;
+  text-shadow:0 8px 20px rgba(0,0,0,.44);
 }
 
 .event-info{
@@ -302,19 +235,17 @@ h1{
   gap:12px;
   font-size:17px;
   font-weight:950;
-  color:white;
 }
 
 .event-info div{
   display:flex;
-  align-items:center;
   gap:10px;
+  align-items:center;
 }
 
 .event-info img{
   width:22px;
   height:22px;
-  object-fit:contain;
 }
 
 .event-card .btn{
@@ -322,8 +253,6 @@ h1{
 }
 
 .pillars{
-  position:relative;
-  z-index:2;
   margin-top:22px;
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -346,7 +275,6 @@ h1{
 .pillar img{
   width:34px;
   height:34px;
-  object-fit:contain;
 }
 
 .pillar strong{
@@ -360,17 +288,60 @@ h1{
   display:block;
   font-size:13px;
   font-weight:750;
-  opacity:.94;
   line-height:1.22;
 }
 
-.mobile-details{
-  display:none;
+.events-section{
+  max-width:1240px;
+  margin:0 auto;
+  padding:44px 22px 70px;
+}
+
+.events-section h2{
+  font-size:42px;
+  margin-bottom:20px;
+  letter-spacing:-.04em;
+}
+
+.events-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.events-box{
+  border-radius:28px;
+  padding:24px;
+  background:rgba(0,0,0,.28);
+  border:1px solid rgba(39,188,237,.34);
+  backdrop-filter:blur(14px);
+}
+
+.events-box h3{
+  color:var(--yellow);
+  font-size:24px;
+  margin-bottom:14px;
+}
+
+.event-link{
+  display:block;
+  padding:16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.95);
+  color:var(--navy);
+  text-decoration:none;
+  font-weight:1000;
+  margin-top:10px;
+}
+
+.event-link span{
+  display:block;
+  margin-top:4px;
+  color:var(--green);
+  font-size:14px;
 }
 
 .footer{
-  position:relative;
-  z-index:2;
   margin-top:12px;
   text-align:center;
   font-size:13px;
@@ -378,16 +349,10 @@ h1{
   opacity:.9;
 }
 
-@media(max-width:900px){
-  body{
-    overflow:hidden;
-  }
+.mobile-details{display:none;}
 
-  body::before{
-    background:
-      linear-gradient(180deg,rgba(0,45,35,.76),rgba(0,95,58,.62)),
-      url("assets/img/background-brand.png") center/cover no-repeat;
-  }
+@media(max-width:900px){
+  body{overflow:hidden;}
 
   .page{
     height:100svh;
@@ -396,11 +361,7 @@ h1{
     justify-content:flex-start;
   }
 
-  .topnav,
-  .watermark,
-  .pillars,
-  .services,
-  .actions.desktop-actions{
+  .topnav,.pillars,.services,.desktop-actions,.events-section{
     display:none;
   }
 
@@ -408,38 +369,27 @@ h1{
     display:block;
   }
 
-  .brand{
-    text-align:center;
-  }
+  .brand{text-align:center;}
 
-  .logo-desktop{
-    display:none;
-  }
+  .logo-desktop{display:none;}
 
   .logo-mobile{
     display:block;
     width:min(230px,56vw);
-    margin:0 auto 7px;
+    margin:0 auto 8px;
     filter:drop-shadow(0 12px 24px rgba(0,0,0,.38));
   }
 
-  h1{
-    font-size:38px;
-    line-height:.9;
-  }
-
   .slogan{
-    margin:8px auto 0;
+    margin:0 auto;
     max-width:360px;
-    font-size:21px;
+    font-size:25px;
     line-height:1.02;
   }
 
   .baseline{
     margin-top:9px;
     font-size:15px;
-    line-height:1.2;
-    font-weight:900;
   }
 
   .event-card{
@@ -447,38 +397,28 @@ h1{
     border-radius:25px;
     min-height:auto;
     padding:17px;
-    box-shadow:0 22px 48px rgba(0,0,0,.34);
   }
 
   .event-card::before{
     background:
-      linear-gradient(90deg,rgba(0,31,35,.92),rgba(0,31,35,.54)),
+      linear-gradient(90deg,rgba(0,31,35,.88),rgba(0,31,35,.30)),
       url("assets/img/hero-summer-tour.png") center/cover no-repeat;
   }
 
-  .event-content{
-    max-width:none;
-  }
+  .event-content{max-width:none;}
 
-  .event-kicker{
-    font-size:10.5px;
-    padding:7px 10px;
-  }
-
-  .event-tour{
-    margin-top:15px;
+  .badge{
     font-size:10.5px;
     padding:7px 10px;
   }
 
   .event-title{
-    margin-top:9px;
-    font-size:37px;
+    margin-top:20px;
+    font-size:39px;
   }
 
   .event-subtitle{
-    margin-top:5px;
-    font-size:24px;
+    font-size:25px;
   }
 
   .event-info{
@@ -512,8 +452,6 @@ h1{
     border-radius:18px;
     padding:12px 14px;
     font-weight:1000;
-    border:1px solid rgba(255,255,255,.55);
-    box-shadow:0 10px 24px rgba(0,0,0,.10);
   }
 
   summary{
@@ -522,156 +460,48 @@ h1{
     font-size:14px;
   }
 
-  summary::-webkit-details-marker{
-    display:none;
-  }
+  summary::-webkit-details-marker{display:none;}
 
   summary::after{
     content:"+";
     float:right;
     color:var(--clay);
     font-size:18px;
-    line-height:1;
   }
 
-  details[open] summary::after{
-    content:"–";
-  }
+  details[open] summary::after{content:"–";}
 
   .details-content{
     margin-top:8px;
     font-size:13px;
     line-height:1.45;
-    font-weight:850;
+  }
+
+  .details-content a{
+    color:var(--navy);
+    font-weight:1000;
+    text-decoration:none;
   }
 
   .footer{
     margin-top:auto;
     font-size:10.8px;
-    line-height:1.18;
   }
 }
 
 @media(max-height:760px) and (min-width:901px){
-  .page{
-    padding-top:10px;
-    padding-bottom:8px;
-  }
-
-  .topnav{
-    margin-bottom:8px;
-  }
-
-  .logo-desktop{
-    width:450px;
-    margin-bottom:12px;
-  }
-
-  h1{
-    font-size:62px;
-  }
-
-  .slogan{
-    font-size:30px;
-    margin-top:9px;
-  }
-
-  .baseline{
-    font-size:21px;
-    margin-top:14px;
-  }
-
-  .actions{
-    margin-top:20px;
-  }
-
-  .event-card{
-    min-height:380px;
-    padding:24px;
-  }
-
-  .event-tour{
-    margin-top:20px;
-  }
-
-  .event-title{
-    font-size:56px;
-  }
-
-  .event-subtitle{
-    font-size:28px;
-  }
-
-  .event-info{
-    margin-top:20px;
-    font-size:16px;
-  }
-
-  .event-card .btn{
-    margin-top:20px;
-  }
-
-  .pillars{
-    margin-top:14px;
-  }
-
-  .pillar{
-    min-height:78px;
-    padding:13px;
-  }
-}
-
-@media(max-height:720px) and (max-width:900px){
-  .logo-mobile{
-    width:min(190px,48vw);
-  }
-
-  h1{
-    font-size:34px;
-  }
-
-  .slogan{
-    font-size:18px;
-  }
-
-  .baseline{
-    font-size:13.5px;
-  }
-
-  .event-card{
-    margin-top:9px;
-    padding:14px;
-  }
-
-  .event-tour{
-    margin-top:10px;
-  }
-
-  .event-title{
-    font-size:32px;
-  }
-
-  .event-subtitle{
-    font-size:21px;
-  }
-
-  .event-info{
-    margin-top:12px;
-    font-size:12.5px;
-  }
-
-  .mobile-details{
-    gap:6px;
-    margin-top:8px;
-  }
-
-  details{
-    padding:10px 12px;
-  }
-
-  .footer{
-    font-size:10px;
-  }
+  .page{padding-top:10px;padding-bottom:8px;}
+  .topnav{margin-bottom:8px;}
+  .logo-desktop{width:450px;margin-bottom:14px;}
+  .slogan{font-size:34px;}
+  .baseline{font-size:21px;margin-top:14px;}
+  .actions{margin-top:20px;}
+  .event-card{min-height:390px;padding:24px;}
+  .event-title{font-size:58px;margin-top:22px;}
+  .event-subtitle{font-size:29px;}
+  .event-info{margin-top:20px;font-size:16px;}
+  .pillars{margin-top:14px;}
+  .pillar{min-height:78px;padding:13px;}
 }
 </style>
 </head>
@@ -680,11 +510,9 @@ h1{
 
 <div class="page">
 
-  <img class="watermark" src="assets/img/logo-julyana-watermark-symbol.png" alt="">
-
   <nav class="topnav">
     <a href="#" class="active">Accueil</a>
-    <a href="#events">Événements</a>
+    <a href="#evenements">Événements</a>
     <a href="https://julyanabt.github.io/suzini-bt-summer/index.html">Summer Tour</a>
     <a href="mailto:contact@julyanabt.fr">Contact</a>
   </nav>
@@ -692,10 +520,8 @@ h1{
   <main class="hero-grid">
 
     <section class="brand">
-      <img class="logo-desktop" src="assets/img/logo-julyana-hero-wide.png" alt="Logo Jul'Yana BT">
-      <img class="logo-mobile" src="assets/img/logo-julyana-mobile.png" alt="Logo Jul'Yana BT">
-
-      <h1>Jul'Yana BT</h1>
+      <img class="logo-desktop" src="assets/img/logo-julyana-hero-wide-bt-white.png" alt="Logo Jul'Yana BT">
+      <img class="logo-mobile" src="assets/img/logo-julyana-mobile-bt-white.png" alt="Logo Jul'Yana BT">
 
       <div class="slogan">
         Née en Guyane.<br>
@@ -715,20 +541,18 @@ h1{
       </div>
 
       <div class="actions desktop-actions">
-        <a class="btn" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+        <a class="btn" href="#evenements">
           Découvrir les événements →
-        </a>
-        <a class="btn secondary" href="#events">
-          Voir le prochain événement →
         </a>
       </div>
     </section>
 
-    <section class="event-card" id="events">
+    <section class="event-card">
       <div class="event-content">
-        <div class="event-kicker">⭐ Prochain événement ⭐</div>
-
-        <div class="event-tour">Summer Tour</div>
+        <div class="badges">
+          <div class="badge sky">⭐ Prochain événement ⭐</div>
+          <div class="badge orange">Summer Tour</div>
+        </div>
 
         <div class="event-title">BT250</div>
         <div class="event-subtitle">Double Mixte</div>
@@ -756,16 +580,16 @@ h1{
     <details>
       <summary>Événements à venir</summary>
       <div class="details-content">
-        09 juillet — BT250 Double Mixte<br>
-        16 juillet — BT250 Double Mixte
+        <a href="https://julyanabt.github.io/suzini-bt-summer/index.html">09 juillet — BT250 Double Mixte</a><br>
+        <a href="https://julyanabt.github.io/suzini-bt-summer/index.html">16 juillet — BT250 Double Mixte</a>
       </div>
     </details>
 
     <details>
       <summary>Événements passés</summary>
       <div class="details-content">
-        02 juillet — Americano<br>
-        Open TSCK Juin 2026
+        <a href="https://julyanabt.github.io/suzini-bt-summer/index.html">02 juillet — Americano</a><br>
+        <a href="https://julyanabt.github.io/tsck-open-juin-2026/">Open TSCK Juin 2026</a>
       </div>
     </details>
   </section>
@@ -773,34 +597,22 @@ h1{
   <section class="pillars">
     <div class="pillar">
       <img src="assets/img/icons/trophy.png" alt="">
-      <div>
-        <strong>Événements</strong>
-        <span>Tournois homologués FFT & ITF</span>
-      </div>
+      <div><strong>Événements</strong><span>Tournois homologués FFT & ITF</span></div>
     </div>
 
     <div class="pillar">
       <img src="assets/img/icons/edit.png" alt="">
-      <div>
-        <strong>Inscriptions</strong>
-        <span>Une plateforme simple et rapide</span>
-      </div>
+      <div><strong>Inscriptions</strong><span>Une plateforme simple et rapide</span></div>
     </div>
 
     <div class="pillar">
       <img src="assets/img/icons/people.png" alt="">
-      <div>
-        <strong>Animations</strong>
-        <span>Americano • Initiations • Entreprises</span>
-      </div>
+      <div><strong>Animations</strong><span>Americano • Initiations • Entreprises</span></div>
     </div>
 
     <div class="pillar">
       <img src="assets/img/icons/info.png" alt="">
-      <div>
-        <strong>Accompagnement</strong>
-        <span>Clubs • Ligues • Collectivités</span>
-      </div>
+      <div><strong>Accompagnement</strong><span>Clubs • Ligues • Collectivités</span></div>
     </div>
   </section>
 
@@ -809,6 +621,36 @@ h1{
   </footer>
 
 </div>
+
+<section class="events-section" id="evenements">
+  <h2>Événements Jul'Yana BT</h2>
+
+  <div class="events-grid">
+    <div class="events-box">
+      <h3>À venir</h3>
+      <a class="event-link" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+        BT250 Double Mixte — Summer Tour
+        <span>09 juillet 2026 • Tennis Club de Suzini</span>
+      </a>
+      <a class="event-link" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+        BT250 Double Mixte — Summer Tour
+        <span>16 juillet 2026 • Tennis Club de Suzini</span>
+      </a>
+    </div>
+
+    <div class="events-box">
+      <h3>Passés</h3>
+      <a class="event-link" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+        Americano — Summer Tour
+        <span>02 juillet 2026 • Tennis Club de Suzini</span>
+      </a>
+      <a class="event-link" href="https://julyanabt.github.io/tsck-open-juin-2026/">
+        Open TSCK Juin 2026
+        <span>28 juin 2026 • TSCK</span>
+      </a>
+    </div>
+  </div>
+</section>
 
 </body>
 </html>
