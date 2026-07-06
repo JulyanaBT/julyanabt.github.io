@@ -14,9 +14,8 @@
   --clay:#c65a1e;
   --orange:#ff6b00;
   --navy:#06284a;
+  --green:#007a3d;
 }
-
-html{scroll-behavior:smooth;}
 
 body{
   min-height:100vh;
@@ -42,14 +41,14 @@ body::after{
   z-index:-1;
   background:
     radial-gradient(circle at 12% 12%,rgba(39,188,237,.28),transparent 28%),
-    radial-gradient(circle at 100% 76%,rgba(255,209,0,.76),transparent 32%);
+    radial-gradient(circle at 100% 76%,rgba(255,209,0,.72),transparent 32%);
 }
 
 .page{
   min-height:100svh;
   max-width:1240px;
   margin:auto;
-  padding:18px 22px 12px;
+  padding:14px 22px 10px;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -59,8 +58,8 @@ body::after{
   display:flex;
   justify-content:flex-end;
   gap:26px;
-  margin-bottom:16px;
-  font-size:13px;
+  margin-bottom:12px;
+  font-size:12px;
   font-weight:1000;
   text-transform:uppercase;
   letter-spacing:.045em;
@@ -78,23 +77,23 @@ body::after{
 
 .hero-grid{
   display:grid;
-  grid-template-columns:1fr .9fr;
-  gap:42px;
+  grid-template-columns:1fr .86fr;
+  gap:38px;
   align-items:center;
 }
 
 .logo-desktop{
-  width:min(520px,42vw);
+  width:min(460px,38vw);
   display:block;
-  margin-bottom:22px;
-  filter:drop-shadow(0 20px 34px rgba(0,0,0,.36));
+  margin-bottom:18px;
+  filter:drop-shadow(0 18px 30px rgba(0,0,0,.34));
 }
 
 .logo-mobile{display:none;}
 
 .slogan{
-  max-width:620px;
-  font-size:clamp(25px,3vw,38px);
+  max-width:560px;
+  font-size:clamp(22px,2.6vw,34px);
   line-height:1.08;
   color:var(--yellow);
   font-weight:950;
@@ -107,16 +106,16 @@ body::after{
 }
 
 .baseline{
-  margin-top:18px;
-  font-size:clamp(19px,2vw,27px);
+  margin-top:14px;
+  font-size:clamp(18px,1.8vw,24px);
   font-weight:1000;
 }
 
 .services{
-  margin-top:14px;
+  margin-top:10px;
   display:flex;
-  gap:9px;
-  font-size:18px;
+  gap:8px;
+  font-size:16px;
   font-weight:950;
 }
 
@@ -124,29 +123,29 @@ body::after{
 .services .sky{color:var(--sky);}
 
 .actions{
-  margin-top:28px;
+  margin-top:22px;
 }
 
 .btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  min-height:54px;
-  padding:15px 24px;
+  min-height:50px;
+  padding:13px 22px;
   border-radius:999px;
   color:white;
   text-decoration:none;
-  font-size:15px;
+  font-size:14px;
   font-weight:1000;
   background:linear-gradient(135deg,var(--orange),var(--clay));
-  box-shadow:0 16px 34px rgba(198,90,30,.36);
+  box-shadow:0 14px 30px rgba(198,90,30,.34);
 }
 
 .event-card-link{
   display:block;
-  border-radius:34px;
+  border-radius:30px;
   overflow:hidden;
-  box-shadow:0 30px 78px rgba(0,0,0,.42);
+  box-shadow:0 26px 66px rgba(0,0,0,.42);
   border:2px solid rgba(39,188,237,.62);
 }
 
@@ -156,114 +155,88 @@ body::after{
 }
 
 .pillars{
-  margin-top:22px;
+  margin-top:18px;
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:12px;
 }
 
 .pillar{
-  min-height:92px;
-  padding:16px;
-  border-radius:22px;
+  min-height:76px;
+  padding:13px;
+  border-radius:20px;
   background:rgba(0,0,0,.26);
   border:1px solid rgba(39,188,237,.32);
   backdrop-filter:blur(12px);
   display:grid;
-  grid-template-columns:36px 1fr;
-  gap:12px;
+  grid-template-columns:32px 1fr;
+  gap:11px;
   align-items:center;
 }
 
 .pillar img{
-  width:34px;
-  height:34px;
+  width:30px;
+  height:30px;
+  object-fit:contain;
 }
 
 .pillar strong{
   display:block;
   color:var(--yellow);
-  font-size:15px;
-  margin-bottom:4px;
+  font-size:14px;
+  margin-bottom:3px;
 }
 
 .pillar span{
   display:block;
-  font-size:13px;
+  font-size:12px;
   font-weight:750;
-  line-height:1.22;
-}
-
-.footer{
-  margin-top:12px;
-  text-align:center;
-  font-size:13px;
-  font-weight:750;
-  opacity:.9;
-}
-
-.events-section{
-  max-width:1240px;
-  margin:auto;
-  padding:44px 22px 70px;
-}
-
-.events-section h2{
-  font-size:40px;
-  margin-bottom:20px;
-}
-
-.events-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-}
-
-.events-box{
-  border-radius:28px;
-  padding:24px;
-  background:rgba(0,0,0,.30);
-  border:1px solid rgba(39,188,237,.34);
-  backdrop-filter:blur(14px);
-}
-
-.events-box h3{
-  color:var(--yellow);
-  font-size:24px;
-  margin-bottom:14px;
-}
-
-.event-link{
-  display:block;
-  padding:16px;
-  border-radius:18px;
-  background:rgba(255,255,255,.95);
-  color:var(--navy);
-  text-decoration:none;
-  font-weight:1000;
-  margin-top:10px;
-}
-
-.event-link span{
-  display:block;
-  margin-top:4px;
-  color:#007a3d;
-  font-size:14px;
+  line-height:1.18;
 }
 
 .mobile-details{display:none;}
 
-@media(max-width:900px){
-  body{overflow:hidden;}
+.footer{
+  margin-top:9px;
+  text-align:center;
+  font-size:12px;
+  font-weight:750;
+  opacity:.9;
+}
 
+/* TABLETTE / PETIT ORDI */
+@media(max-width:1050px) and (min-width:901px){
+  .hero-grid{
+    gap:26px;
+    grid-template-columns:1fr .92fr;
+  }
+
+  .logo-desktop{
+    width:min(400px,38vw);
+  }
+
+  .slogan{
+    font-size:28px;
+  }
+
+  .pillars{
+    gap:10px;
+  }
+
+  .pillar{
+    padding:12px;
+  }
+}
+
+/* MOBILE */
+@media(max-width:900px){
   .page{
-    height:100svh;
     min-height:100svh;
-    padding:10px 14px 8px;
+    padding:8px 14px 8px;
     justify-content:flex-start;
   }
 
-  .topnav,.pillars,.services,.desktop-actions,.events-section{
+  .topnav,.pillars,.services,.desktop-actions{
     display:none;
   }
 
@@ -271,52 +244,57 @@ body::after{
     display:block;
   }
 
-  .brand{text-align:center;}
+  .brand{
+    text-align:center;
+  }
 
-  .logo-desktop{display:none;}
+  .logo-desktop{
+    display:none;
+  }
 
   .logo-mobile{
     display:block;
-    width:min(220px,55vw);
-    margin:0 auto 10px;
-    filter:drop-shadow(0 12px 24px rgba(0,0,0,.38));
+    width:min(165px,42vw);
+    margin:0 auto 6px;
+    filter:drop-shadow(0 10px 22px rgba(0,0,0,.36));
   }
 
   .slogan{
     margin:auto;
-    max-width:360px;
-    font-size:18px;
-    line-height:1.18;
+    max-width:350px;
+    font-size:15.5px;
+    line-height:1.15;
   }
 
   .baseline{
-    margin-top:9px;
-    font-size:15px;
+    margin-top:6px;
+    font-size:13.5px;
   }
 
   .event-card-link{
-    margin-top:14px;
-    border-radius:24px;
+    margin-top:9px;
+    border-radius:20px;
+    box-shadow:0 18px 40px rgba(0,0,0,.34);
   }
 
   .mobile-details{
     display:grid;
-    gap:8px;
-    margin-top:10px;
+    gap:6px;
+    margin-top:8px;
   }
 
   details{
     background:rgba(255,255,255,.96);
     color:var(--navy);
-    border-radius:18px;
-    padding:12px 14px;
+    border-radius:15px;
+    padding:9px 12px;
     font-weight:1000;
   }
 
   summary{
     list-style:none;
     cursor:pointer;
-    font-size:14px;
+    font-size:13px;
   }
 
   summary::-webkit-details-marker{display:none;}
@@ -325,15 +303,18 @@ body::after{
     content:"+";
     float:right;
     color:var(--clay);
-    font-size:18px;
+    font-size:17px;
+    line-height:1;
   }
 
-  details[open] summary::after{content:"–";}
+  details[open] summary::after{
+    content:"–";
+  }
 
   .details-content{
-    margin-top:8px;
-    font-size:13px;
-    line-height:1.45;
+    margin-top:7px;
+    font-size:12.5px;
+    line-height:1.4;
   }
 
   .details-content a{
@@ -343,8 +324,97 @@ body::after{
   }
 
   .footer{
-    margin-top:auto;
-    font-size:10.8px;
+    margin-top:10px;
+    font-size:10px;
+    line-height:1.15;
+  }
+}
+
+/* MOBILES BAS EN HAUTEUR */
+@media(max-height:720px) and (max-width:900px){
+  .logo-mobile{
+    width:min(140px,36vw);
+    margin-bottom:4px;
+  }
+
+  .slogan{
+    font-size:14px;
+  }
+
+  .baseline{
+    font-size:12.5px;
+    margin-top:5px;
+  }
+
+  .event-card-link{
+    margin-top:7px;
+    border-radius:18px;
+  }
+
+  details{
+    padding:8px 11px;
+  }
+
+  summary{
+    font-size:12.5px;
+  }
+
+  .footer{
+    font-size:9.5px;
+    margin-top:8px;
+  }
+}
+
+/* ORDI BAS EN HAUTEUR */
+@media(max-height:760px) and (min-width:901px){
+  .page{
+    padding-top:8px;
+    padding-bottom:7px;
+  }
+
+  .topnav{
+    margin-bottom:8px;
+  }
+
+  .logo-desktop{
+    width:390px;
+    margin-bottom:12px;
+  }
+
+  .slogan{
+    font-size:27px;
+  }
+
+  .baseline{
+    font-size:20px;
+    margin-top:11px;
+  }
+
+  .services{
+    font-size:15px;
+  }
+
+  .actions{
+    margin-top:17px;
+  }
+
+  .btn{
+    min-height:46px;
+    padding:12px 20px;
+  }
+
+  .pillars{
+    margin-top:13px;
+  }
+
+  .pillar{
+    min-height:68px;
+    padding:11px;
+  }
+
+  .footer{
+    margin-top:7px;
+    font-size:11px;
   }
 }
 </style>
@@ -356,7 +426,7 @@ body::after{
 
   <nav class="topnav">
     <a href="#" class="active">Accueil</a>
-    <a href="#evenements">Événements</a>
+    <a href="evenements.html">Événements</a>
     <a href="https://julyanabt.github.io/suzini-bt-summer/index.html">Summer Tour</a>
     <a href="mailto:contact@julyanabt.fr">Contact</a>
   </nav>
@@ -385,7 +455,9 @@ body::after{
       </div>
 
       <div class="actions desktop-actions">
-        <a class="btn" href="#evenements">Découvrir les événements →</a>
+        <a class="btn" href="evenements.html">
+          Découvrir les événements →
+        </a>
       </div>
     </section>
 
@@ -416,22 +488,34 @@ body::after{
   <section class="pillars">
     <div class="pillar">
       <img src="assets/img/icons/trophy.png" alt="">
-      <div><strong>Événements</strong><span>Tournois homologués FFT & ITF</span></div>
+      <div>
+        <strong>Événements</strong>
+        <span>Tournois homologués FFT & ITF</span>
+      </div>
     </div>
 
     <div class="pillar">
       <img src="assets/img/icons/edit.png" alt="">
-      <div><strong>Inscriptions</strong><span>Une plateforme simple et rapide</span></div>
+      <div>
+        <strong>Inscriptions</strong>
+        <span>Une plateforme simple et rapide</span>
+      </div>
     </div>
 
     <div class="pillar">
       <img src="assets/img/icons/people.png" alt="">
-      <div><strong>Animations</strong><span>Americano • Initiations • Entreprises</span></div>
+      <div>
+        <strong>Animations</strong>
+        <span>Americano • Initiations • Entreprises</span>
+      </div>
     </div>
 
     <div class="pillar">
       <img src="assets/img/icons/info.png" alt="">
-      <div><strong>Accompagnement</strong><span>Clubs • Ligues • Collectivités</span></div>
+      <div>
+        <strong>Accompagnement</strong>
+        <span>Clubs • Ligues • Collectivités</span>
+      </div>
     </div>
   </section>
 
@@ -440,40 +524,6 @@ body::after{
   </footer>
 
 </div>
-
-<section class="events-section" id="evenements">
-  <h2>Événements Jul'Yana BT</h2>
-
-  <div class="events-grid">
-    <div class="events-box">
-      <h3>À venir</h3>
-
-      <a class="event-link" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
-        BT250 Double Mixte — Summer Tour
-        <span>09 juillet 2026 • Tennis Club de Suzini</span>
-      </a>
-
-      <a class="event-link" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
-        BT250 Double Mixte — Summer Tour
-        <span>16 juillet 2026 • Tennis Club de Suzini</span>
-      </a>
-    </div>
-
-    <div class="events-box">
-      <h3>Passés</h3>
-
-      <a class="event-link" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
-        Americano — Summer Tour
-        <span>02 juillet 2026 • Tennis Club de Suzini</span>
-      </a>
-
-      <a class="event-link" href="https://julyanabt.github.io/tsck-open-juin-2026/">
-        Open TSCK Juin 2026
-        <span>28 juin 2026 • TSCK</span>
-      </a>
-    </div>
-  </div>
-</section>
 
 </body>
 </html>
