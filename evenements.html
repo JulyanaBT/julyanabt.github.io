@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Événements — Jul'Yana BT</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+
+:root{
+  --yellow:#ffd100;
+  --sky:#27bced;
+  --clay:#c65a1e;
+  --orange:#ff6b00;
+  --navy:#06284a;
+  --green:#007a3d;
+}
+
+body{
+  min-height:100vh;
+  color:#fff;
+  background:#003f2f;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background:
+    linear-gradient(135deg,rgba(0,35,28,.88),rgba(0,85,52,.72)),
+    url("assets/img/background-brand.png") center/cover no-repeat;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:
+    radial-gradient(circle at 12% 12%,rgba(39,188,237,.28),transparent 28%),
+    radial-gradient(circle at 100% 76%,rgba(255,209,0,.70),transparent 32%);
+}
+
+.page{
+  max-width:1240px;
+  margin:auto;
+  padding:18px 22px 28px;
+}
+
+.topnav{
+  display:flex;
+  justify-content:flex-end;
+  gap:26px;
+  margin-bottom:26px;
+  font-size:12px;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:.045em;
+}
+
+.topnav a{
+  color:white;
+  text-decoration:none;
+  opacity:.9;
+}
+
+.topnav a.active{
+  color:var(--yellow);
+}
+
+.logo{
+  width:min(360px,70vw);
+  display:block;
+  filter:drop-shadow(0 18px 30px rgba(0,0,0,.34));
+}
+
+.hero{
+  display:grid;
+  grid-template-columns:1fr .9fr;
+  gap:34px;
+  align-items:center;
+  margin-bottom:28px;
+}
+
+.hero h1{
+  margin-top:18px;
+  font-size:clamp(42px,5vw,68px);
+  line-height:.9;
+  letter-spacing:-.06em;
+  font-weight:1000;
+}
+
+.hero p{
+  margin-top:14px;
+  max-width:620px;
+  font-size:clamp(18px,2vw,25px);
+  line-height:1.2;
+  font-weight:850;
+}
+
+.featured{
+  display:block;
+  border-radius:30px;
+  overflow:hidden;
+  box-shadow:0 26px 66px rgba(0,0,0,.42);
+  border:2px solid rgba(39,188,237,.62);
+}
+
+.featured img{
+  width:100%;
+  display:block;
+}
+
+.section{
+  margin-top:28px;
+}
+
+.section-title{
+  font-size:30px;
+  margin-bottom:14px;
+  color:var(--yellow);
+  letter-spacing:-.035em;
+}
+
+.events-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+
+.event-card{
+  display:grid;
+  grid-template-columns:82px 1fr auto;
+  gap:16px;
+  align-items:center;
+  padding:18px;
+  border-radius:24px;
+  background:rgba(255,255,255,.96);
+  color:var(--navy);
+  text-decoration:none;
+  box-shadow:0 18px 38px rgba(0,0,0,.20);
+  border:1px solid rgba(255,255,255,.6);
+}
+
+.event-card.past{
+  opacity:.86;
+}
+
+.date-box{
+  border-radius:18px;
+  padding:12px 10px;
+  background:linear-gradient(135deg,var(--orange),var(--clay));
+  color:white;
+  text-align:center;
+  font-weight:1000;
+}
+
+.date-box strong{
+  display:block;
+  font-size:28px;
+  line-height:1;
+}
+
+.date-box span{
+  display:block;
+  font-size:12px;
+  margin-top:4px;
+  text-transform:uppercase;
+}
+
+.event-info h3{
+  font-size:21px;
+  margin-bottom:5px;
+}
+
+.event-info p{
+  color:var(--green);
+  font-size:14px;
+  font-weight:900;
+  line-height:1.25;
+}
+
+.arrow{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--yellow);
+  color:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:1000;
+}
+
+.back{
+  display:inline-flex;
+  margin-top:28px;
+  padding:13px 20px;
+  border-radius:999px;
+  background:rgba(0,0,0,.25);
+  color:white;
+  border:1px solid rgba(39,188,237,.45);
+  text-decoration:none;
+  font-weight:1000;
+}
+
+.footer{
+  margin-top:22px;
+  text-align:center;
+  font-size:12px;
+  font-weight:750;
+  opacity:.9;
+}
+
+@media(max-width:900px){
+  .page{
+    padding:10px 14px 18px;
+  }
+
+  .topnav{
+    justify-content:center;
+    gap:14px;
+    font-size:10.5px;
+    margin-bottom:14px;
+  }
+
+  .hero{
+    display:block;
+    text-align:center;
+    margin-bottom:18px;
+  }
+
+  .logo{
+    width:min(190px,52vw);
+    margin:auto;
+  }
+
+  .hero h1{
+    margin-top:10px;
+    font-size:34px;
+  }
+
+  .hero p{
+    margin:9px auto 0;
+    font-size:14px;
+    max-width:340px;
+  }
+
+  .featured{
+    margin-top:14px;
+    border-radius:22px;
+  }
+
+  .section{
+    margin-top:18px;
+  }
+
+  .section-title{
+    font-size:24px;
+    margin-bottom:10px;
+  }
+
+  .events-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .event-card{
+    grid-template-columns:64px 1fr 32px;
+    gap:11px;
+    padding:12px;
+    border-radius:19px;
+  }
+
+  .date-box{
+    border-radius:14px;
+    padding:9px 8px;
+  }
+
+  .date-box strong{
+    font-size:23px;
+  }
+
+  .date-box span{
+    font-size:10px;
+  }
+
+  .event-info h3{
+    font-size:16px;
+  }
+
+  .event-info p{
+    font-size:12px;
+  }
+
+  .arrow{
+    width:32px;
+    height:32px;
+    font-size:18px;
+  }
+
+  .back{
+    margin-top:18px;
+    width:100%;
+    justify-content:center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <nav class="topnav">
+    <a href="index.html">Accueil</a>
+    <a href="evenements.html" class="active">Événements</a>
+    <a href="https://julyanabt.github.io/suzini-bt-summer/index.html">Summer Tour</a>
+    <a href="mailto:contact@julyanabt.fr">Contact</a>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <img class="logo" src="assets/img/logo-julyana-hero-wide-bt-white.png" alt="Logo Jul'Yana BT">
+
+      <h1>Événements Jul'Yana BT</h1>
+
+      <p>
+        Les compétitions, animations et rendez-vous Beach Tennis organisés par Jul'Yana BT.
+      </p>
+    </div>
+
+    <a class="featured" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+      <img src="assets/img/event-card-bt250-sunset.png" alt="BT250 Double Mixte Summer Tour">
+    </a>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">À venir</h2>
+
+    <div class="events-grid">
+      <a class="event-card" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+        <div class="date-box">
+          <strong>09</strong>
+          <span>Juil.</span>
+        </div>
+        <div class="event-info">
+          <h3>BT250 Double Mixte — Summer Tour</h3>
+          <p>Tennis Club de Suzini • Étape 2</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="event-card" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+        <div class="date-box">
+          <strong>16</strong>
+          <span>Juil.</span>
+        </div>
+        <div class="event-info">
+          <h3>BT250 Double Mixte — Summer Tour</h3>
+          <p>Tennis Club de Suzini • Étape 3</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Passés</h2>
+
+    <div class="events-grid">
+      <a class="event-card past" href="https://julyanabt.github.io/suzini-bt-summer/index.html">
+        <div class="date-box">
+          <strong>02</strong>
+          <span>Juil.</span>
+        </div>
+        <div class="event-info">
+          <h3>Americano — Summer Tour</h3>
+          <p>Tennis Club de Suzini • Étape 1</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="event-card past" href="https://julyanabt.github.io/tsck-open-juin-2026/">
+        <div class="date-box">
+          <strong>28</strong>
+          <span>Juin</span>
+        </div>
+        <div class="event-info">
+          <h3>Open TSCK Juin 2026</h3>
+          <p>TSCK • Double Dames & Double Messieurs</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <a class="back" href="index.html">← Retour à l’accueil</a>
+
+  <footer class="footer">
+    © Jul'Yana BT • Application mobile en préparation
+  </footer>
+
+</div>
+
+</body>
+</html>
