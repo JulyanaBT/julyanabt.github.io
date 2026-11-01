@@ -10,7 +10,7 @@
   content="width=device-width, initial-scale=1, viewport-fit=cover"
 >
 
-<title>Jul'Yana BT</title>
+<title>JulyanaBT · Le beach tennis en Guyane</title>
 
 
 <style>
@@ -658,12 +658,14 @@ body::after{
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="icon" href="assets/img/favicon.png">
 <link rel="stylesheet" href="assets/mobile.css?v=1">
-</head>
+<link rel="stylesheet" href="assets/mobile-preview.css?v=1"></head>
 
 
-<body>
+<body class="home-v2">
 
 <div class="page">
+<header class="mobile-brand"><a href="index.html" class="brand-home" aria-label="JulyanaBT, accueil"><img src="assets/img/app-icon-192.png" alt=""><span><strong>Jul’Yana BT</strong><small>LE BEACH TENNIS EN GUYANE</small></span></a><button type="button" data-main-install aria-label="Ajouter JulyanaBT à l’écran d’accueil">＋</button></header>
+<section class="mobile-intro"><p>NÉE EN GUYANE. OUVERTE À TOUS.</p><h1>Tous vos rendez-vous<br><span>beach tennis.</span></h1><div>Tournois, rencontres et animations en Guyane.</div></section>
 
 
   <!-- =====================================
@@ -770,11 +772,17 @@ body::after{
 
 
     <!-- PROCHAIN ÉVÉNEMENT -->
-    <a class="event-card-link" href="https://julyanabt.fr/vendredis-bt-suzini-etape-3-2026/" aria-label="Les Vendredis du BT Suzini — Étape 3, le 6 novembre 2026">
+    <a class="event-card-link desktop-event" href="https://julyanabt.fr/vendredis-bt-suzini-etape-3-2026/" aria-label="Les Vendredis du BT Suzini — Étape 3, le 6 novembre 2026">
       <span class="event-caption">À venir · 6 novembre 2026 · BT250</span>
       <img class="event-card-img" src="https://julyanabt.fr/vendredis-bt-suzini-etape-3-2026/assets/img/flyer-vendredis-suzini-etape-3.jpg" alt="Les Vendredis du BT Suzini — Étape 3 au TC Suzini, le 6 novembre 2026" fetchpriority="high">
       <span class="event-caption event-caption-detail">Doubles dames & hommes · accueil 17 h 45 · matchs à 18 h</span>
     </a>
+
+<a class="mobile-event" href="https://julyanabt.fr/vendredis-bt-suzini-etape-3-2026/" aria-label="Découvrir Les Vendredis du BT Suzini, étape 3, le 6 novembre 2026">
+ <div class="mobile-event-photo"><img src="https://julyanabt.fr/vendredis-bt-suzini-etape-3-2026/assets/img/home-court-player-v2.jpg" alt="Une joueuse de beach tennis au coucher du soleil" fetchpriority="high"><span class="next-tag"><i></i> PROCHAIN RENDEZ-VOUS</span><span class="date-tile"><strong>06</strong><small>NOV.</small></span></div>
+ <div class="mobile-event-body"><div class="event-pills"><span>BT250</span><span>ÉTAPE 3</span></div><h2>Les Vendredis<br>du BT Suzini</h2><p class="event-disciplines">Double dames <span>·</span> Double hommes</p><div class="event-place"><span>TC Suzini</span><span>Vendredi 6 novembre 2026</span></div><p class="event-practical">Accueil 17 h 45 <span>·</span> 10 € / joueur</p><span class="event-cta">Découvrir le tournoi <b aria-hidden="true">↗</b></span></div>
+</a>
+<div class="mobile-more"><a href="evenements.html"><span><small>TOUTE L’ANNÉE</small><strong>Nos événements</strong></span><b aria-hidden="true">↗</b></a><a href="#past-events"><span><small>LES BONS SOUVENIRS</small><strong>Événements passés</strong></span><b aria-hidden="true">↓</b></a></div>
 
   </main>
 
@@ -807,7 +815,7 @@ body::after{
 
     <!-- PASSÉS -->
 
-    <details>
+    <details id="past-events">
 
       <summary>
         Événements passés
@@ -946,7 +954,7 @@ body::after{
        FOOTER
   ====================================== -->
 
-  <footer class="footer">
+  <footer class="footer"><a class="mobile-contact" href="mailto:contact@julyanabt.fr">Une idée, un événement ? Parlons-en ↗</a>
 
     © Jul'Yana BT · Le beach tennis en Guyane
 
@@ -955,6 +963,6 @@ body::after{
 
 </div>
 
-<script type="module" src="assets/install.js?v=1"></script></body>
+<script type="module" src="assets/install.js?v=1"></script><script>document.querySelector('.mobile-more a[href="#past-events"]')?.addEventListener('click',event=>{event.preventDefault();const box=document.getElementById('past-events');box.open=true;box.scrollIntoView({behavior:'smooth',block:'start'});});</script></body>
 
 </html>
