@@ -3,3 +3,5 @@
 .day-add{min-height:30px;min-width:30px;padding:0;border:0;background:transparent;font-size:.875rem;font-weight:600;border-radius:50%}.day-add:hover{background:#d8eddf}.custody-summary{padding:.8rem;background:#e9f4ec;border-radius:12px;font-weight:600}dialog{max-height:calc(100dvh - 2rem);overflow-y:auto}#custody-fields label{font-weight:600}#event-form .actions{position:sticky;bottom:-1.4rem;background:white;padding:.8rem 0;margin-bottom:-.4rem}#new-custody{white-space:nowrap}@media(max-width:600px){.event{font-size:.75rem}.day{min-height:100px}.day-add{min-height:32px;min-width:30px}}
 
 .planning-actions{margin:.5rem 0 1rem}.planning-preview{padding-left:1.3rem;max-height:180px;overflow:auto;font-size:.875rem}.planning-preview li{margin:.4rem 0}#planning-form .actions{position:sticky;bottom:-1.4rem;background:white;padding:.7rem 0}
+
+.text-button{border:0;background:transparent;text-decoration:underline;color:#00753c;padding:.5rem 0;margin-top:.5rem}

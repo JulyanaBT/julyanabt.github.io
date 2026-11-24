@@ -1,3 +1,4 @@
+import {readAuthReturn} from './auth-return.mjs?v=5';
 import {isCustody,nights,nextDay,eventLabel,validateCustody,addDays,alternatingWeeks,recurrencePreview} from './custody.mjs?v=4';
 const $=id=>document.getElementById(id);
 const profile=document.body.dataset.profile;
@@ -130,6 +131,9 @@ $('event-form').onsubmit=async e=>{
  }catch(error){const message=error.code==='23P01'?'Une autre garde occupe déjà ces nuits. Actualise le calendrier avant de réessayer.':error.message;$('event-error').textContent=!$('custody-warning').hidden&&$('custody-warning').textContent===message?'':message}finally{button.disabled=false}
 };
 $('auth-form').onsubmit=async e=>{e.preventDefault();$('signin').disabled=true;try{const data=await call('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})});saveSession(data);$('password').value='';await sync(true)}catch(error){say('Connexion impossible. Vérifie ton mot de passe et la confirmation de ton compte.',true)}finally{$('signin').disabled=false}};
+$('forgot-password').onclick=()=>{$('recovery-email').value=$('email').value.trim();$('recovery-status').textContent='';$('recovery-dialog').showModal()};
+$('recovery-close').onclick=()=>$('recovery-dialog').close();
+$('recovery-form').onsubmit=async e=>{e.preventDefault();$('recovery-send').disabled=true;$('recovery-status').textContent='Envoi en cours…';try{await call('/auth/v1/recover?redirect_to='+encodeURIComponent('https://julyanabt.fr/famtempo/'),{method:'POST',body:JSON.stringify({email:$('recovery-email').value.trim()})});$('recovery-status').textContent='Si un compte correspond à cette adresse, un e-mail de réinitialisation a été envoyé. Vérifie aussi les indésirables. Le lien est à usage unique.'}catch(error){$('recovery-status').textContent=error.status===429?'Un lien vient déjà d’être demandé. Patiente une minute avant de réessayer.':'L’e-mail n’a pas pu être envoyé. Réessaie dans un instant. Si cela persiste, le service d’envoi doit être vérifié.'}finally{$('recovery-send').disabled=false}};
 $('signup').onclick=async()=>{if(!$('auth-form').reportValidity())return;$('signup').disabled=true;try{const data=await call('/auth/v1/signup',{method:'POST',body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})});if(data.access_token){saveSession(data);await sync(true)}else say('Compte demandé. Ouvre le message de confirmation reçu par e-mail, puis reviens te connecter.')}catch(error){say(error.message,true)}finally{$('signup').disabled=false}};
 $('logout').onclick=async()=>{try{await call('/auth/v1/logout',{method:'POST'})}catch{}session=null;localStorage.removeItem(sessionKey);location.reload()};
 $('calendar-view').onchange=e=>{selected=e.target.value;renderCalendar()};
@@ -147,15 +151,20 @@ async function boot(){
  $('auth').hidden=true;if(!access){say('Ouvre le lien privé complet reçu dans le mail pour activer ce profil de simulation.',true);return}
  }else{
  try{session=JSON.parse(storageGet(sessionKey)||'null')}catch{}
- const tokenHash=hash.get('token_hash');const type=hash.get('type');
+ const authReturn=readAuthReturn(location.href),tokenHash=authReturn.tokenHash,type=authReturn.type;
+ const returnedToken=authReturn.accessToken,returnedRefresh=authReturn.refreshToken;
+ if(authReturn.error){history.replaceState(null,'',location.pathname);say('Le lien de réinitialisation a expiré ou a déjà été utilisé. Demande un nouveau lien avec « Mot de passe oublié ? ».',true)}
+ if(returnedToken&&returnedRefresh&&['recovery','invite','signup','magiclink'].includes(type)){
+  try{const user=await fetch(API+'/auth/v1/user',{headers:{apikey:KEY,Authorization:'Bearer '+returnedToken}});if(!user.ok)throw new Error('Invalid session');saveSession({access_token:returnedToken,refresh_token:returnedRefresh,expires_at:Math.floor(Date.now()/1000)+authReturn.expiresIn,user:await user.json()});history.replaceState(null,'',location.pathname);$('password-heading').textContent=type==='recovery'?'Nouveau mot de passe':'Active ton compte';$('password-dialog').showModal()}catch{say('Le lien n’est plus valide. Demande un nouveau lien avec « Mot de passe oublié ? ».',true)}
+ }
  if(tokenHash&&['invite','recovery','signup','magiclink'].includes(type)){
- try{saveSession(await call('/auth/v1/verify',{method:'POST',body:JSON.stringify({token_hash:tokenHash,type})}));history.replaceState(null,'',location.pathname);$('password-dialog').showModal()}catch{say('Le lien d’activation a expiré. Connecte-toi ou demande un nouveau lien.',true)}
+ try{saveSession(await call('/auth/v1/verify',{method:'POST',body:JSON.stringify({token_hash:tokenHash,type})}));history.replaceState(null,'',location.pathname);$('password-heading').textContent=type==='recovery'?'Nouveau mot de passe':'Active ton compte';$('password-dialog').showModal()}catch{say('Le lien a expiré ou a déjà été utilisé. Demande un nouveau lien avec « Mot de passe oublié ? ».',true)}
  }
  if(!session){$('auth').hidden=false;return}
  }
  await sync(true);
 }
-$('password-form').onsubmit=async e=>{e.preventDefault();$('set-password').disabled=true;try{await call('/auth/v1/user',{method:'PUT',body:JSON.stringify({password:$('new-password').value})});$('new-password').value='';$('password-dialog').close();say('Mot de passe enregistré. Ton compte est prêt.')}catch(error){$('password-error').textContent=error.message}finally{$('set-password').disabled=false}};
+$('password-form').onsubmit=async e=>{e.preventDefault();$('set-password').disabled=true;try{if($('new-password').value!==$('confirm-password').value)throw new Error('Les deux mots de passe doivent être identiques.');await refreshSession();await call('/auth/v1/user',{method:'PUT',body:JSON.stringify({password:$('new-password').value})});$('new-password').value='';$('confirm-password').value='';$('password-dialog').close();say('Mot de passe enregistré. Ton compte est prêt.')}catch(error){$('password-error').textContent=error.message}finally{$('set-password').disabled=false}};
 window.addEventListener('online',()=>sync(true));window.addEventListener('focus',()=>sync());document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
 setInterval(()=>{if(loaded)sync()},3000);
 if('serviceWorker'in navigator)navigator.serviceWorker.register(BASE+'sw.js',{scope:BASE}).catch(()=>{});
