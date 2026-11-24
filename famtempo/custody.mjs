@@ -14,3 +14,12 @@ export function validateCustody(events,data,calendar){
  if(conflictWith(events,data))return 'Une garde existe déjà sur ces nuits. Ouvre-la pour la modifier ou choisis une autre période.';
  return '';
 }
+export function addDays(date,count){return new Date(Date.parse(date+'T00:00:00Z')+count*86400000).toISOString().slice(0,10)}
+export function alternatingWeeks(calendar,first,end,parent,time='18:00'){
+ const parents=Object.keys(calendar.custody_parents||{});
+ if(parents.length!==2||!parents.includes(parent))throw new Error('Choisis le premier parent.');
+ if(new Date(first+'T00:00:00Z').getUTCDay()!==5||new Date(end+'T00:00:00Z').getUTCDay()!==5)throw new Error('Le début et la fin de l’alternance doivent être des vendredis.');
+ const count=nights(first,end);if(!count||count>735||count%7)throw new Error('Choisis une période de 1 à 105 semaines complètes.');
+ return Array.from({length:count/7},(_,i)=>({calendar_id:calendar.id,custodian:i%2?parents.find(p=>p!==parent):parent,first_day:addDays(first,i*7),end_day:addDays(first,(i+1)*7),handoff_start:time||null,handoff_end:time||null,title:'Garde'}));
+}
+export function recurrencePreview(events,weeks){return {create:weeks.filter(w=>!conflictWith(events,w)),keep:weeks.filter(w=>conflictWith(events,w))}}

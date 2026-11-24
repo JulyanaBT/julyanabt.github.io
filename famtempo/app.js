@@ -1,4 +1,4 @@
-import {isCustody,nights,nextDay,eventLabel,validateCustody} from './custody.mjs?v=2';
+import {isCustody,nights,nextDay,eventLabel,validateCustody,addDays,alternatingWeeks,recurrencePreview} from './custody.mjs?v=4';
 const $=id=>document.getElementById(id);
 const profile=document.body.dataset.profile;
 const names={jules:'Jules',marine:'Marine',sophie:'Sophie',mathieu:'Mathieu'};
@@ -48,7 +48,7 @@ function render(){
  if(!view.value){selected='all';view.value='all'}
  $('filters').replaceChildren();
  for(const c of calendars){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!hidden.has(c.id);check.onchange=()=>{check.checked?hidden.delete(c.id):hidden.add(c.id);renderCalendar()};label.append(check,' '+c.name);$('filters').append(label)}
- $('new-event').disabled=!calendars.some(c=>editable(c)&&!isCustody(c));$('new-custody').disabled=!calendars.some(c=>editable(c)&&isCustody(c));renderCalendar();
+ $('new-event').disabled=!calendars.some(c=>editable(c)&&!isCustody(c));$('new-custody').disabled=!calendars.some(c=>editable(c)&&isCustody(c));$('new-alternance').disabled=$('new-custody').disabled;$('new-vacation').disabled=$('new-custody').disabled;renderCalendar();
 }
 function visibleEvents(){const ids=new Set(calendars.filter(c=>selected==='all'?!hidden.has(c.id):selected===c.id).map(c=>c.id));return events.filter(e=>ids.has(e.calendar_id))}
 function renderCalendar(){
@@ -59,13 +59,13 @@ function renderCalendar(){
  const day=i-offset+1,cell=document.createElement('div');cell.className='day';
  if(day<1||day>count){cell.classList.add('empty');grid.append(cell);continue}
  const date=new Date(Date.UTC(year,m,day)).toISOString().slice(0,10),num=document.createElement('div');num.className='number';const canAdd=calendars.some(c=>editable(c)&&isCustody(c)&&(selected==='all'||selected===c.id));if(canAdd){const add=document.createElement('button');add.type='button';add.className='day-add';add.textContent=day;add.setAttribute('aria-label','Ajouter une garde le '+dateFmt.format(new Date(date)));add.onclick=()=>openEvent(null,{kind:'custody',date});num.append(add)}else num.textContent=day;cell.append(num);
- for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day)){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status;b.style.setProperty('--event-color',c.color);b.textContent=(isCustody(c)?c.name+' · ':'')+eventLabel(e,c);b.title=c.name+' · '+eventLabel(e,c);b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
+ for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day)){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status;b.style.setProperty('--event-color',c.color);b.textContent=(e.is_exception?'Vacances / exception · ':'')+(isCustody(c)?c.name+' · ':'')+eventLabel(e,c);b.title=c.name+' · '+eventLabel(e,c);b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
  }
  const start=new Date(Date.UTC(year,m,1)).toISOString().slice(0,10),end=new Date(Date.UTC(year,m+1,1)).toISOString().slice(0,10);
  const list=$('agenda');list.replaceChildren();
  const monthly=shown.filter(e=>e.first_day<end&&e.end_day>start);
  if(!monthly.length){const p=document.createElement('p');p.className='muted';p.textContent='Aucun événement ce mois-ci. Ajoute une proposition pour tester la synchronisation.';list.append(p)}
- for(const e of monthly){const c=calendars.find(c=>c.id===e.calendar_id),wrap=document.createElement('div'),b=document.createElement('button');wrap.className='agenda-item';b.textContent=dateFmt.format(new Date(e.first_day))+' – '+dateFmt.format(new Date(e.end_day))+' · '+c.name+' · '+eventLabel(e,c)+(isCustody(c)?' · '+nights(e.first_day,e.end_day)+' nuit'+(nights(e.first_day,e.end_day)>1?'s':''):'')+' · '+(e.status==='confirmed'?'Confirmé':'Proposé');b.onclick=()=>openEvent(e);wrap.append(b);list.append(wrap)}
+ for(const e of monthly){const c=calendars.find(c=>c.id===e.calendar_id),wrap=document.createElement('div'),b=document.createElement('button');wrap.className='agenda-item';b.textContent=dateFmt.format(new Date(e.first_day))+' – '+dateFmt.format(new Date(e.end_day))+' · '+c.name+' · '+eventLabel(e,c)+(isCustody(c)?' · '+nights(e.first_day,e.end_day)+' nuit'+(nights(e.first_day,e.end_day)>1?'s':''):'')+(e.is_exception?' · Vacances / exception':'')+' · '+(e.status==='confirmed'?'Confirmé':'Proposé');b.onclick=()=>openEvent(e);wrap.append(b);list.append(wrap)}
  $('filters').hidden=selected!=='all';
 }
 let formCanEdit=false;
@@ -107,7 +107,7 @@ function openEvent(event=null,{kind='event',date=null}={}){
  updateCustodyForm();if(event?.custodian)$('custody-parent').value=event.custodian;updateSummary();
  const custody=isCustody(formCalendar());
  $('event-heading').textContent=custody?(event?(formCanEdit?'Modifier la garde':'Détail de la garde'):'Ajouter une garde'):(event?'Détail de la période':'Nouvel événement');
- $('edit-note').textContent=formCanEdit?(custody?'Cette garde reste une proposition partagée avec les personnes autorisées.':'La proposition sera enregistrée dans le calendrier partagé.'):(event?.status==='confirmed'?'Cette période est confirmée. Sa modification nécessitera un accord.':'Ce profil peut consulter cette garde, mais seuls les parents concernés peuvent la modifier.');
+ $('edit-note').textContent=formCanEdit?(custody?(event?.series_id?'Cette semaine peut être modifiée seule : le reste de l’alternance reste en place.':'Cette garde reste une proposition partagée avec les personnes autorisées.'):'La proposition sera enregistrée dans le calendrier partagé.'):(event?.status==='confirmed'?'Cette période est confirmée. Sa modification nécessitera un accord.':'Ce profil peut consulter cette garde, mais seuls les parents concernés peuvent la modifier.');
  $('event-error').textContent='';$('event-dialog').showModal();
 }
 $('event-calendar').onchange=()=>updateCustodyForm();
@@ -162,3 +162,56 @@ if('serviceWorker'in navigator)navigator.serviceWorker.register(BASE+'sw.js',{sc
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 if(!standalone&&!storageGet('famtempo.install.seen.'+profile)){$('install-dialog').showModal();storageSet('famtempo.install.seen.'+profile,'1')}
 boot();
+
+let planningMode='alternance',planningSnapshot=null;
+function planningCalendar(){return calendars.find(c=>c.id===$('planning-child').value)}
+function openPlanning(mode){
+ planningMode=mode;planningSnapshot=null;$('planning-form').reset();
+ const available=calendars.filter(c=>editable(c)&&isCustody(c));if(!available.length)return;
+ $('planning-child').replaceChildren(...available.map(c=>option(c.id,c.name)));
+ if(available.some(c=>c.id===selected))$('planning-child').value=selected;
+ const date=month.toISOString().slice(0,10),friday=addDays(date,(5-new Date(date+'T00:00:00Z').getUTCDay()+7)%7);
+ $('planning-start').value=mode==='alternance'?friday:date;$('planning-end').value=addDays($('planning-start').value,mode==='alternance'?84:7);$('planning-time').value='18:00';
+ $('planning-heading').textContent=mode==='alternance'?'Créer une alternance':'Prévoir des vacances';
+ $('planning-note').textContent=mode==='alternance'?'Une semaine chez chaque parent, du vendredi au vendredi. Les semaines qui chevauchent une garde existante ne sont pas créées. Les périodes déjà saisies et le rythme des semaines suivantes sont conservés.':'La plage choisie remplace les gardes proposées concernées. Les nuits avant et après sont conservées ; l’alternance reprend ensuite normalement.';
+ $('planning-start-label').firstChild.textContent=mode==='alternance'?'Premier vendredi':'Début des vacances';$('planning-end-label').firstChild.textContent=mode==='alternance'?'Dernier vendredi · fin exclue':'Retour des vacances';
+ $('planning-parent-label').firstChild.textContent=mode==='alternance'?'Parent de la première semaine':'Parent pendant les vacances';
+ $('planning-save').textContent=mode==='alternance'?'Créer les semaines':'Appliquer les vacances';
+ updatePlanningParents();$('planning-dialog').showModal();
+}
+function updatePlanningParents(){
+ const calendar=planningCalendar();$('planning-parent').replaceChildren(option('','Choisir un parent'),...Object.entries(calendar.custody_parents).map(([id,name])=>option(id,'Chez '+name)));
+ $('planning-zone').textContent='Heures locales : '+calendar.time_zone;previewPlanning();
+}
+function previewPlanning(){
+ planningSnapshot=null;$('planning-error').textContent='';$('planning-preview').replaceChildren();
+ try{
+ const calendar=planningCalendar(),first=$('planning-start').value,end=$('planning-end').value,parent=$('planning-parent').value,time=$('planning-time').value||null;
+ if(!parent||!first||!end){$('planning-count').textContent='Choisis le parent et les dates pour prévisualiser.';return}
+ if(planningMode==='alternance'){
+  const weeks=alternatingWeeks(calendar,first,end,parent,time),plan=recurrencePreview(events,weeks);
+  planningSnapshot={calendar,first,end,parent,time,...plan};$('planning-count').textContent=plan.create.length+' semaine(s) à créer · '+plan.keep.length+' semaine(s) non créée(s) car une garde y existe déjà.';
+  for(const w of weeks){const li=document.createElement('li');const skip=plan.keep.includes(w);li.textContent=dateFmt.format(new Date(w.first_day))+' – '+dateFmt.format(new Date(w.end_day))+' : '+(skip?'non créée · chevauche une garde existante':'chez '+calendar.custody_parents[w.custodian]);$('planning-preview').append(li)}
+ }else{
+  if(!nights(first,end)||nights(first,end)>366)throw new Error('Choisis une plage de vacances de 1 à 366 nuits.');
+  const affected=events.filter(e=>e.calendar_id===calendar.id&&e.first_day<end&&first<e.end_day);
+  if(affected.some(e=>e.status==='confirmed'))throw new Error('Une garde confirmée couvre cette plage. Un accord est nécessaire avant de la modifier.');
+  planningSnapshot={calendar,first,end,parent,time,expected:affected.map(e=>({id:e.id,revision:e.revision}))};
+  $('planning-count').textContent=nights(first,end)+' nuits chez '+calendar.custody_parents[parent]+' · '+affected.length+' période(s) proposée(s) à ajuster.';
+  for(const e of affected){const li=document.createElement('li');li.textContent=dateFmt.format(new Date(e.first_day))+' – '+dateFmt.format(new Date(e.end_day))+' : '+eventLabel(e,calendar)+' sera ajustée uniquement sur les nuits de vacances.';$('planning-preview').append(li)}
+ }
+ }catch(error){$('planning-count').textContent='';$('planning-error').textContent=error.message}
+}
+$('new-alternance').onclick=()=>openPlanning('alternance');$('new-vacation').onclick=()=>openPlanning('vacation');$('planning-close').onclick=()=>$('planning-dialog').close();
+$('planning-child').onchange=updatePlanningParents;for(const id of ['planning-parent','planning-start','planning-end','planning-time'])$(id).oninput=previewPlanning;
+$('planning-form').onsubmit=async e=>{
+ e.preventDefault();const button=$('planning-save');button.disabled=true;
+ try{
+  const plan=planningSnapshot;if(!plan)throw new Error('Complète les champs et vérifie la prévisualisation.');await refreshSession();
+  if(planningMode==='alternance'){
+   if(!plan.create.length)throw new Error('Aucune semaine ne peut être ajoutée sans chevaucher une garde existante. Aucune garde n’a été modifiée.');
+   const series=crypto.randomUUID();await call('/rest/v1/ft_events',{method:'POST',body:JSON.stringify(plan.create.map(w=>({...w,series_id:series})))});
+  }else await call('/rest/v1/rpc/ft_apply_vacation',{method:'POST',body:JSON.stringify({p_calendar:plan.calendar.id,p_first:plan.first,p_end:plan.end,p_parent:plan.parent,p_start_time:plan.time,p_end_time:plan.time,p_expected:plan.expected})});
+  month=new Date(plan.first+'T00:00:00Z');month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth(),1));hidden.delete(plan.calendar.id);selected=plan.calendar.id;stamp='';$('planning-dialog').close();say(planningMode==='alternance'?'Alternance créée et partagée. Les périodes existantes ont été conservées.':'Vacances enregistrées et partagées. Les gardes hors vacances ont été conservées.');await sync();
+ }catch(error){$('planning-error').textContent=error.code==='23P01'||error.code==='40001'?'Le calendrier a changé. Ferme cette fenêtre, actualise puis vérifie une nouvelle prévisualisation.':error.message}finally{button.disabled=false}
+};
