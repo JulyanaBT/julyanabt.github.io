@@ -65,7 +65,7 @@ function renderCalendar(){
  const list=$('agenda');list.replaceChildren();
  const monthly=shown.filter(e=>e.first_day<end&&e.end_day>start);
  if(!monthly.length){const p=document.createElement('p');p.className='muted';p.textContent='Aucun événement ce mois-ci. Ajoute une proposition pour tester la synchronisation.';list.append(p)}
- for(const e of monthly){const c=calendars.find(c=>c.id===e.calendar_id),wrap=document.createElement('div'),b=document.createElement('button');wrap.className='agenda-item';b.textContent=dateFmt.format(new Date(e.first_day))+' – '+dateFmt.format(new Date(e.end_day))+' · '+c.name+' · '+eventLabel(e,c)+(isCustody(c)?' · '+nights(e.first_day,e.end_day)+' nuits':'')+' · '+(e.status==='confirmed'?'Confirmé':'Proposé');b.onclick=()=>openEvent(e);wrap.append(b);list.append(wrap)}
+ for(const e of monthly){const c=calendars.find(c=>c.id===e.calendar_id),wrap=document.createElement('div'),b=document.createElement('button');wrap.className='agenda-item';b.textContent=dateFmt.format(new Date(e.first_day))+' – '+dateFmt.format(new Date(e.end_day))+' · '+c.name+' · '+eventLabel(e,c)+(isCustody(c)?' · '+nights(e.first_day,e.end_day)+' nuit'+(nights(e.first_day,e.end_day)>1?'s':''):'')+' · '+(e.status==='confirmed'?'Confirmé':'Proposé');b.onclick=()=>openEvent(e);wrap.append(b);list.append(wrap)}
  $('filters').hidden=selected!=='all';
 }
 let formCanEdit=false;
@@ -127,7 +127,7 @@ $('event-form').onsubmit=async e=>{
  month=new Date(data.first_day+'T00:00:00Z');month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth(),1));
  hidden.delete(calendar.id);if(selected!=='all'&&selected!==calendar.id)selected=calendar.id;
  $('event-dialog').close();say(custody?'Garde enregistrée et partagée.':'Événement enregistré et partagé.');stamp='';await sync();
- }catch(error){$('event-error').textContent=error.code==='23P01'?'Une autre garde occupe déjà ces nuits. Actualise le calendrier avant de réessayer.':error.message}finally{button.disabled=false}
+ }catch(error){const message=error.code==='23P01'?'Une autre garde occupe déjà ces nuits. Actualise le calendrier avant de réessayer.':error.message;$('event-error').textContent=!$('custody-warning').hidden&&$('custody-warning').textContent===message?'':message}finally{button.disabled=false}
 };
 $('auth-form').onsubmit=async e=>{e.preventDefault();$('signin').disabled=true;try{const data=await call('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})});saveSession(data);$('password').value='';await sync(true)}catch(error){say('Connexion impossible. Vérifie ton mot de passe et la confirmation de ton compte.',true)}finally{$('signin').disabled=false}};
 $('signup').onclick=async()=>{if(!$('auth-form').reportValidity())return;$('signup').disabled=true;try{const data=await call('/auth/v1/signup',{method:'POST',body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})});if(data.access_token){saveSession(data);await sync(true)}else say('Compte demandé. Ouvre le message de confirmation reçu par e-mail, puis reviens te connecter.')}catch(error){say(error.message,true)}finally{$('signup').disabled=false}};
