@@ -1,3 +1,4 @@
+import {isCustody,nights,nextDay,eventLabel,validateCustody} from './custody.mjs?v=2';
 const $=id=>document.getElementById(id);
 const profile=document.body.dataset.profile;
 const names={jules:'Jules',marine:'Marine',sophie:'Sophie',mathieu:'Mathieu'};
@@ -17,7 +18,7 @@ function headers(){const h={apikey:KEY,'Content-Type':'application/json'};if(pro
 async function call(path,options={}){
  const response=await fetch(API+path,{...options,headers:{...headers(),...options.headers},cache:'no-store'});
  const data=await response.json().catch(()=>null);
- if(!response.ok){const error=new Error(data?.msg||data?.message||'Connexion au service impossible.');error.status=response.status;throw error}return data;
+ if(!response.ok){const error=new Error(data?.msg||data?.message||'Connexion au service impossible.');error.status=response.status;error.code=data?.code;throw error}return data;
 }
 async function refreshSession(){
  if(profile!=='jules'||!session)return;
@@ -47,7 +48,7 @@ function render(){
  if(!view.value){selected='all';view.value='all'}
  $('filters').replaceChildren();
  for(const c of calendars){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!hidden.has(c.id);check.onchange=()=>{check.checked?hidden.delete(c.id):hidden.add(c.id);renderCalendar()};label.append(check,' '+c.name);$('filters').append(label)}
- $('new-event').disabled=!calendars.some(editable);renderCalendar();
+ $('new-event').disabled=!calendars.some(c=>editable(c)&&!isCustody(c));$('new-custody').disabled=!calendars.some(c=>editable(c)&&isCustody(c));renderCalendar();
 }
 function visibleEvents(){const ids=new Set(calendars.filter(c=>selected==='all'?!hidden.has(c.id):selected===c.id).map(c=>c.id));return events.filter(e=>ids.has(e.calendar_id))}
 function renderCalendar(){
@@ -57,41 +58,76 @@ function renderCalendar(){
  for(let i=0;i<Math.ceil((offset+count)/7)*7;i++){
  const day=i-offset+1,cell=document.createElement('div');cell.className='day';
  if(day<1||day>count){cell.classList.add('empty');grid.append(cell);continue}
- const date=new Date(Date.UTC(year,m,day)).toISOString().slice(0,10),num=document.createElement('div');num.className='number';num.textContent=day;cell.append(num);
- for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day)){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status;b.style.setProperty('--event-color',c.color);b.textContent=e.title;b.title=c.name+' · '+e.title;b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
+ const date=new Date(Date.UTC(year,m,day)).toISOString().slice(0,10),num=document.createElement('div');num.className='number';const canAdd=calendars.some(c=>editable(c)&&isCustody(c)&&(selected==='all'||selected===c.id));if(canAdd){const add=document.createElement('button');add.type='button';add.className='day-add';add.textContent=day;add.setAttribute('aria-label','Ajouter une garde le '+dateFmt.format(new Date(date)));add.onclick=()=>openEvent(null,{kind:'custody',date});num.append(add)}else num.textContent=day;cell.append(num);
+ for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day)){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status;b.style.setProperty('--event-color',c.color);b.textContent=(isCustody(c)?c.name+' · ':'')+eventLabel(e,c);b.title=c.name+' · '+eventLabel(e,c);b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
  }
  const start=new Date(Date.UTC(year,m,1)).toISOString().slice(0,10),end=new Date(Date.UTC(year,m+1,1)).toISOString().slice(0,10);
  const list=$('agenda');list.replaceChildren();
  const monthly=shown.filter(e=>e.first_day<end&&e.end_day>start);
  if(!monthly.length){const p=document.createElement('p');p.className='muted';p.textContent='Aucun événement ce mois-ci. Ajoute une proposition pour tester la synchronisation.';list.append(p)}
- for(const e of monthly){const c=calendars.find(c=>c.id===e.calendar_id),wrap=document.createElement('div'),b=document.createElement('button');wrap.className='agenda-item';b.textContent=dateFmt.format(new Date(e.first_day))+' · '+c.name+' · '+e.title+' · '+(e.status==='confirmed'?'Confirmé':'Proposé');b.onclick=()=>openEvent(e);wrap.append(b);list.append(wrap)}
+ for(const e of monthly){const c=calendars.find(c=>c.id===e.calendar_id),wrap=document.createElement('div'),b=document.createElement('button');wrap.className='agenda-item';b.textContent=dateFmt.format(new Date(e.first_day))+' – '+dateFmt.format(new Date(e.end_day))+' · '+c.name+' · '+eventLabel(e,c)+(isCustody(c)?' · '+nights(e.first_day,e.end_day)+' nuits':'')+' · '+(e.status==='confirmed'?'Confirmé':'Proposé');b.onclick=()=>openEvent(e);wrap.append(b);list.append(wrap)}
  $('filters').hidden=selected!=='all';
 }
-function openEvent(event=null){
+let formCanEdit=false;
+function formCalendar(){return calendars.find(c=>c.id===$('event-calendar').value)}
+function updateCustodyForm(keepParent=false){
+ const calendar=formCalendar(),custody=isCustody(calendar),previous=$('custody-parent').value;
+ $('custody-fields').hidden=!custody;$('title-field').hidden=custody;
+ $('event-title').required=!custody;$('custody-parent').required=custody;
+ $('event-calendar-label').firstChild.textContent=custody?'Enfant':'Calendrier';
+ if(custody){
+  const parents=Object.entries(calendar.custody_parents);
+  $('custody-parent').replaceChildren(option('','Choisir un parent'),...parents.map(([id,name])=>option(id,'Chez '+name)));
+  if(keepParent&&parents.some(([id])=>id===previous))$('custody-parent').value=previous;
+  $('time-zone').textContent='Heures locales : '+calendar.time_zone+' · '+calendar.name;
+ }else $('time-zone').textContent='';
+ updateSummary();
+}
+function updateSummary(){
+ const calendar=formCalendar();if(!isCustody(calendar)){$('custody-summary').hidden=true;return}
+ $('custody-summary').hidden=false;
+ const data={id:$('event-id').value,calendar_id:calendar.id,custodian:$('custody-parent').value,first_day:$('event-start').value,end_day:$('event-end').value};
+ const count=nights(data.first_day,data.end_day),parent=calendar.custody_parents[data.custodian];
+ $('custody-summary').textContent=count?(count+' nuit'+(count>1?'s':'')+(parent?' chez '+parent:'')+'. Le jour de retour n’est pas compté comme une nuit.'):'Choisis les dates de début et de retour.';
+ const error=formCanEdit?validateCustody(events,data,calendar):'';
+ $('custody-warning').textContent=error;$('custody-warning').hidden=!error;
+}
+function openEvent(event=null,{kind='event',date=null}={}){
  $('event-form').reset();$('event-id').value=event?.id||'';$('event-revision').value=event?.revision||'';
- const available=event?calendars.filter(c=>c.id===event.calendar_id):calendars.filter(editable);
+ const available=event?calendars.filter(c=>c.id===event.calendar_id):calendars.filter(c=>editable(c)&&(kind==='custody'?isCustody(c):!isCustody(c)));
+ if(!available.length){say('Aucun calendrier modifiable pour ce type de période.',true);return}
  $('event-calendar').replaceChildren(...available.map(c=>option(c.id,c.name)));
- const canEdit=!event||(event.status==='proposed'&&editable(available[0]));
- $('event-title').value=event?.title||'';$('event-start').value=event?.first_day||month.toISOString().slice(0,10);
- $('event-end').value=event?.end_day||new Date(month.getTime()+86400000).toISOString().slice(0,10);
+ if(!event&&available.some(c=>c.id===selected))$('event-calendar').value=selected;
+ formCanEdit=!event||(event.status==='proposed'&&editable(available[0]));
+ $('event-title').value=event?.title||'';$('event-start').value=event?.first_day||date||month.toISOString().slice(0,10);
+ $('event-end').value=event?.end_day||nextDay($('event-start').value);
  $('event-start-time').value=event?.handoff_start?.slice(0,5)||'';$('event-end-time').value=event?.handoff_end?.slice(0,5)||'';
- for(const el of $('event-form').querySelectorAll('input,select'))el.disabled=!canEdit;
- $('event-calendar').disabled=!!event||!canEdit;$('save-event').hidden=!canEdit;
- $('event-heading').textContent=event?'Détail de la période':'Nouvelle proposition';
- $('edit-note').textContent=canEdit?'La proposition sera enregistrée dans le calendrier partagé.':'Consultation seule pour ce profil ou période déjà confirmée.';
+ for(const el of $('event-form').querySelectorAll('input,select'))el.disabled=!formCanEdit;
+ $('event-calendar').disabled=!!event||!formCanEdit;$('save-event').hidden=!formCanEdit;
+ updateCustodyForm();if(event?.custodian)$('custody-parent').value=event.custodian;updateSummary();
+ const custody=isCustody(formCalendar());
+ $('event-heading').textContent=custody?(event?(formCanEdit?'Modifier la garde':'Détail de la garde'):'Ajouter une garde'):(event?'Détail de la période':'Nouvel événement');
+ $('edit-note').textContent=formCanEdit?(custody?'Cette garde reste une proposition partagée avec les personnes autorisées.':'La proposition sera enregistrée dans le calendrier partagé.'):(event?.status==='confirmed'?'Cette période est confirmée. Sa modification nécessitera un accord.':'Ce profil peut consulter cette garde, mais seuls les parents concernés peuvent la modifier.');
  $('event-error').textContent='';$('event-dialog').showModal();
 }
+$('event-calendar').onchange=()=>updateCustodyForm();
+for(const id of ['custody-parent','event-start','event-end','event-start-time','event-end-time'])$(id).oninput=()=>{if(id==='event-start'&&$('event-start').value&&$('event-end').value<=$('event-start').value)$('event-end').value=nextDay($('event-start').value);updateSummary()};
 $('event-form').onsubmit=async e=>{
  e.preventDefault();const button=$('save-event');button.disabled=true;
  try{
- const id=$('event-id').value;const data={title:$('event-title').value.trim(),first_day:$('event-start').value,end_day:$('event-end').value,handoff_start:$('event-start-time').value||null,handoff_end:$('event-end-time').value||null};
- if(!data.title||data.end_day<=data.first_day)throw new Error('La fin doit se situer après le début.');
+ await refreshSession();
+ const id=$('event-id').value,calendar=formCalendar(),custody=isCustody(calendar);
+ const data={title:$(custody?'custody-parent':'event-title').value.trim(),first_day:$('event-start').value,end_day:$('event-end').value,handoff_start:$('event-start-time').value||null,handoff_end:$('event-end-time').value||null};
+ if(custody){data.custodian=$('custody-parent').value;data.title='Chez '+(calendar.custody_parents[data.custodian]||'');const error=validateCustody(events,{...data,id,calendar_id:calendar.id},calendar);if(error)throw new Error(error)}
+ else if(!data.title||data.end_day<=data.first_day)throw new Error('La fin doit se situer après le début.');
  let result;
  if(id)result=await call('/rest/v1/ft_events?id=eq.'+encodeURIComponent(id)+'&revision=eq.'+$('event-revision').value,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
- else result=await call('/rest/v1/ft_events',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({...data,calendar_id:$('event-calendar').value})});
- if(!result?.length)throw new Error('Cette proposition a changé ou tes droits ne permettent pas cette modification. Ferme puis actualise.');
- $('event-dialog').close();say('Proposition enregistrée et partagée.');await sync();
- }catch(error){$('event-error').textContent=error.message}finally{button.disabled=false}
+ else result=await call('/rest/v1/ft_events',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({...data,calendar_id:calendar.id})});
+ if(!result?.length)throw new Error('Cette période a été modifiée depuis son ouverture ou tes droits ont changé. Ferme le formulaire, actualise et rouvre la période.');
+ month=new Date(data.first_day+'T00:00:00Z');month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth(),1));
+ hidden.delete(calendar.id);if(selected!=='all'&&selected!==calendar.id)selected=calendar.id;
+ $('event-dialog').close();say(custody?'Garde enregistrée et partagée.':'Événement enregistré et partagé.');stamp='';await sync();
+ }catch(error){$('event-error').textContent=error.code==='23P01'?'Une autre garde occupe déjà ces nuits. Actualise le calendrier avant de réessayer.':error.message}finally{button.disabled=false}
 };
 $('auth-form').onsubmit=async e=>{e.preventDefault();$('signin').disabled=true;try{const data=await call('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})});saveSession(data);$('password').value='';await sync(true)}catch(error){say('Connexion impossible. Vérifie ton mot de passe et la confirmation de ton compte.',true)}finally{$('signin').disabled=false}};
 $('signup').onclick=async()=>{if(!$('auth-form').reportValidity())return;$('signup').disabled=true;try{const data=await call('/auth/v1/signup',{method:'POST',body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})});if(data.access_token){saveSession(data);await sync(true)}else say('Compte demandé. Ouvre le message de confirmation reçu par e-mail, puis reviens te connecter.')}catch(error){say(error.message,true)}finally{$('signup').disabled=false}};
@@ -99,7 +135,7 @@ $('logout').onclick=async()=>{try{await call('/auth/v1/logout',{method:'POST'})}
 $('calendar-view').onchange=e=>{selected=e.target.value;renderCalendar()};
 $('prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()-1,1));renderCalendar()};
 $('next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));renderCalendar()};
-$('new-event').onclick=()=>openEvent();$('refresh').onclick=()=>sync(true);
+$('new-event').onclick=()=>openEvent();$('new-custody').onclick=()=>openEvent(null,{kind:'custody'});$('refresh').onclick=()=>sync(true);
 $('close-event').onclick=()=>$('event-dialog').close();$('install-open').onclick=()=>$('install-dialog').showModal();$('install-close').onclick=()=>$('install-dialog').close();
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('native-install').hidden=false});
 $('native-install').onclick=async()=>{if(deferredPrompt){await deferredPrompt.prompt();deferredPrompt=null;$('native-install').hidden=true}};
