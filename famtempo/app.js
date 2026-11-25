@@ -56,7 +56,7 @@ function visibleEvents(){const ids=new Set(calendars.filter(c=>selected==='all'?
 function renderCalendar(){
  $('month').textContent=monthFmt.format(month);$('agenda-month').textContent='Les périodes de '+monthFmt.format(month);const grid=$('grid');grid.replaceChildren();
  for(const day of ['Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.','Dim.']){const el=document.createElement('div');el.className='weekday';el.textContent=day;grid.append(el)}
- const year=month.getUTCFullYear(),m=month.getUTCMonth(),offset=(month.getUTCDay()+6)%7,count=new Date(Date.UTC(year,m+1,0)).getUTCDate(),shown=visibleEvents();
+ const year=month.getUTCFullYear(),m=month.getUTCMonth(),offset=(month.getUTCDay()+6)%7,count=new Date(Date.UTC(year,m+1,0)).getUTCDate(),shown=visibleEvents();grid.style.setProperty('--weeks',Math.ceil((offset+count)/7));
  for(let i=0;i<Math.ceil((offset+count)/7)*7;i++){
  const day=i-offset+1,cell=document.createElement('div');cell.className='day';
  if(day<1||day>count){cell.classList.add('empty');grid.append(cell);continue}
@@ -155,7 +155,7 @@ window.addEventListener('appinstalled',()=>{storageSet(installedKey,'1');deferre
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();if(storageGet(installedKey)!=='1'){deferredPrompt=e;$('native-install').hidden=false}});
 $('native-install').onclick=async()=>{if(deferredPrompt){await deferredPrompt.prompt();const result=await deferredPrompt.userChoice;if(result.outcome==='accepted'){storageSet(installedKey,'1');updateInstallVisibility()}deferredPrompt=null;$('native-install').hidden=true}};
 for(const button of document.querySelectorAll('[data-tab]'))button.onclick=()=>{
- const tab=button.dataset.tab;
+ const tab=button.dataset.tab;document.body.dataset.view=tab;
  for(const view of document.querySelectorAll('.tab-view'))view.hidden=view.id!=='view-'+tab;
  for(const item of document.querySelectorAll('[data-tab]')){if(item===button)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current')}
 };
