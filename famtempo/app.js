@@ -8,7 +8,8 @@ const API='https://buxlddhjwgqyxxuszmtj.supabase.co';
 const KEY='sb_publishable_1KG-61FmOj1peKXudkh7xA_Ww2oc98N';
 const sessionKey='famtempo.auth.v1';
 let session=null, access='',calendars=[],events=[],busy=false,loaded=false,stamp='',hidden=new Set(),selected='all';
-let month=new Date(Date.UTC(2027,0,1));
+const now=new Date();
+let month=new Date(Date.UTC(now.getFullYear(),now.getMonth(),1));
 let deferredPrompt=null;
 const dateFmt=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'short',timeZone:'UTC'});
 const monthFmt=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric',timeZone:'UTC'});
@@ -39,7 +40,7 @@ async function sync(manual=false){
  const next=JSON.stringify([cs,es]);if(next!==stamp){stamp=next;render()}
  $('auth').hidden=true;$('app').hidden=false;$('logout').hidden=profile!=='jules';
  loaded=true;$('sync').textContent='Synchronisé à '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
- $('sync').className='sync ok';if(manual)say('Calendriers à jour.');
+ $('sync').className='sync ok';if(manual)say('');
  }catch(error){$('sync').textContent='Synchronisation interrompue — réessayer';$('sync').className='sync error';if(manual||!loaded)say(error.message,true);if(profile==='jules'&&error.status===401){session=null;localStorage.removeItem(sessionKey);$('auth').hidden=false;$('app').hidden=true;}}
  finally{busy=false}
 }
@@ -47,20 +48,20 @@ function option(value,text){const el=document.createElement('option');el.value=v
 function render(){
  const view=$('calendar-view');view.replaceChildren(option('all','Mon calendrier'),...calendars.map(c=>option(c.id,c.name)));view.value=selected;
  if(!view.value){selected='all';view.value='all'}
- $('filters').replaceChildren();
- for(const c of calendars){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!hidden.has(c.id);check.onchange=()=>{check.checked?hidden.delete(c.id):hidden.add(c.id);renderCalendar()};label.append(check,' '+c.name);$('filters').append(label)}
+ $('filters').replaceChildren();$('calendar-key').replaceChildren();
+ for(const c of calendars){const key=document.createElement('span');key.className='legend-item';key.style.setProperty('--event-color',c.color);key.textContent=c.name;$('calendar-key').append(key);const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!hidden.has(c.id);check.onchange=()=>{check.checked?hidden.delete(c.id):hidden.add(c.id);renderCalendar()};label.style.setProperty('--event-color',c.color);label.append(check,' '+c.name);$('filters').append(label)}
  $('new-event').disabled=!calendars.some(c=>editable(c)&&!isCustody(c));$('new-custody').disabled=!calendars.some(c=>editable(c)&&isCustody(c));$('new-alternance').disabled=$('new-custody').disabled;$('new-vacation').disabled=$('new-custody').disabled;renderCalendar();
 }
 function visibleEvents(){const ids=new Set(calendars.filter(c=>selected==='all'?!hidden.has(c.id):selected===c.id).map(c=>c.id));return events.filter(e=>ids.has(e.calendar_id))}
 function renderCalendar(){
- $('month').textContent=monthFmt.format(month);const grid=$('grid');grid.replaceChildren();
+ $('month').textContent=monthFmt.format(month);$('agenda-month').textContent='Les périodes de '+monthFmt.format(month);const grid=$('grid');grid.replaceChildren();
  for(const day of ['Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.','Dim.']){const el=document.createElement('div');el.className='weekday';el.textContent=day;grid.append(el)}
  const year=month.getUTCFullYear(),m=month.getUTCMonth(),offset=(month.getUTCDay()+6)%7,count=new Date(Date.UTC(year,m+1,0)).getUTCDate(),shown=visibleEvents();
  for(let i=0;i<Math.ceil((offset+count)/7)*7;i++){
  const day=i-offset+1,cell=document.createElement('div');cell.className='day';
  if(day<1||day>count){cell.classList.add('empty');grid.append(cell);continue}
- const date=new Date(Date.UTC(year,m,day)).toISOString().slice(0,10),num=document.createElement('div');num.className='number';const canAdd=calendars.some(c=>editable(c)&&isCustody(c)&&(selected==='all'||selected===c.id));if(canAdd){const add=document.createElement('button');add.type='button';add.className='day-add';add.textContent=day;add.setAttribute('aria-label','Ajouter une garde le '+dateFmt.format(new Date(date)));add.onclick=()=>openEvent(null,{kind:'custody',date});num.append(add)}else num.textContent=day;cell.append(num);
- for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day)){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status;b.style.setProperty('--event-color',c.color);b.textContent=(e.is_exception?'Vacances / exception · ':'')+(isCustody(c)?c.name+' · ':'')+eventLabel(e,c);b.title=c.name+' · '+eventLabel(e,c);b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
+ const date=new Date(Date.UTC(year,m,day)).toISOString().slice(0,10),num=document.createElement('div');num.className='number';if(date===new Date().toLocaleDateString('sv-SE'))cell.classList.add('today');const canAdd=calendars.some(c=>editable(c)&&isCustody(c)&&(selected==='all'||selected===c.id));if(canAdd){const add=document.createElement('button');add.type='button';add.className='day-add';add.textContent=day;add.setAttribute('aria-label','Ajouter une garde le '+dateFmt.format(new Date(date)));add.onclick=()=>openEvent(null,{kind:'custody',date});num.append(add)}else num.textContent=day;cell.append(num);
+ for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day)){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status;b.style.setProperty('--event-color',c.color);b.textContent=(e.is_exception?'Vacances / exception · ':'')+(isCustody(c)?c.name+' · ':'')+eventLabel(e,c);b.title=c.name+' · '+eventLabel(e,c);b.setAttribute('aria-label',b.title+(e.is_exception?' · Vacances ou exception':''));const full=document.createElement('span');full.className='event-full';full.textContent=b.textContent;const compact=document.createElement('span');compact.className='event-compact';compact.textContent=(e.is_exception?'✦ ':'')+(isCustody(c)?eventLabel(e,c).replace(/^Chez /i,''):e.title);b.replaceChildren(full,compact);b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
  }
  const start=new Date(Date.UTC(year,m,1)).toISOString().slice(0,10),end=new Date(Date.UTC(year,m+1,1)).toISOString().slice(0,10);
  const list=$('agenda');list.replaceChildren();
@@ -141,8 +142,25 @@ $('prev').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getU
 $('next').onclick=()=>{month=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));renderCalendar()};
 $('new-event').onclick=()=>openEvent();$('new-custody').onclick=()=>openEvent(null,{kind:'custody'});$('refresh').onclick=()=>sync(true);
 $('close-event').onclick=()=>$('event-dialog').close();$('install-open').onclick=()=>$('install-dialog').showModal();$('install-close').onclick=()=>$('install-dialog').close();
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('native-install').hidden=false});
-$('native-install').onclick=async()=>{if(deferredPrompt){await deferredPrompt.prompt();deferredPrompt=null;$('native-install').hidden=true}};
+const installedKey='famtempo.installed.'+profile;
+const standaloneQuery=matchMedia('(display-mode: standalone)');
+function updateInstallVisibility(){
+ const installed=standaloneQuery.matches||navigator.standalone===true;
+ if(installed)storageSet(installedKey,'1');
+ $('install-open').hidden=installed||storageGet(installedKey)==='1';
+ if($('install-open').hidden&&$('install-dialog').open)$('install-dialog').close();
+}
+standaloneQuery.addEventListener('change',updateInstallVisibility);
+window.addEventListener('appinstalled',()=>{storageSet(installedKey,'1');deferredPrompt=null;updateInstallVisibility()});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();if(storageGet(installedKey)!=='1'){deferredPrompt=e;$('native-install').hidden=false}});
+$('native-install').onclick=async()=>{if(deferredPrompt){await deferredPrompt.prompt();const result=await deferredPrompt.userChoice;if(result.outcome==='accepted'){storageSet(installedKey,'1');updateInstallVisibility()}deferredPrompt=null;$('native-install').hidden=true}};
+for(const button of document.querySelectorAll('[data-tab]'))button.onclick=()=>{
+ const tab=button.dataset.tab;
+ for(const view of document.querySelectorAll('.tab-view'))view.hidden=view.id!=='view-'+tab;
+ for(const item of document.querySelectorAll('[data-tab]')){if(item===button)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current')}
+};
+$('today').onclick=()=>{const date=new Date();month=new Date(Date.UTC(date.getFullYear(),date.getMonth(),1));renderCalendar()};
+updateInstallVisibility();
 async function boot(){
  const hash=new URLSearchParams(location.hash.slice(1));
  if(profile!=='jules'){
@@ -168,8 +186,6 @@ $('password-form').onsubmit=async e=>{e.preventDefault();$('set-password').disab
 window.addEventListener('online',()=>sync(true));window.addEventListener('focus',()=>sync());document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
 setInterval(()=>{if(loaded)sync()},3000);
 if('serviceWorker'in navigator)navigator.serviceWorker.register(BASE+'sw.js',{scope:BASE}).catch(()=>{});
-const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-if(!standalone&&!storageGet('famtempo.install.seen.'+profile)){$('install-dialog').showModal();storageSet('famtempo.install.seen.'+profile,'1')}
 boot();
 
 let planningMode='alternance',planningSnapshot=null;
