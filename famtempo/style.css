@@ -24,3 +24,10 @@
  body[data-view="home"]:has(#app:not([hidden])) footer{display:none}
 }
 @media(max-width:600px) and (max-height:650px){body[data-view="home"] .calendar-toolbar h1{font-size:1rem}.header-inner{min-height:56px}.header-inner img{width:40px;height:40px}body[data-view="home"] .day-add{min-height:20px;min-width:24px}.number{line-height:1.1}body[data-view="home"] .event{font-size:.7rem;line-height:1.1}.signature{font-size:.7rem}}
+
+/* The child's name stays visible; the same parent always has the same colour. */
+.custody-event{background:var(--parent-bg);color:var(--parent-ink);border-left:3px solid var(--parent-ink);font-weight:650}.custody-event.proposed{border-left-style:solid}.custody-event.holiday{outline:1px dashed var(--parent-ink);outline-offset:-1px}.parent-legend{font-weight:600}.other-legend{color:#627368}
+@media(max-width:600px){body[data-view="home"] .custody-event{padding:.13rem .08rem;border-left-width:2px;border-radius:3px;font-size:.72rem;line-height:1.15}body[data-view="home"] .custody-event .event-compact{letter-spacing:-.025em}body[data-view="home"] .calendar-key{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.1rem .5rem}.other-legend{display:none}.parent-legend{font-size:.75rem}.parent-legend:before{width:10px;height:10px}.day.empty{background:#f3f5f3}}
+@media(max-width:350px){body[data-view="home"] .custody-event{font-size:.67rem;padding-inline:0;border-left-width:1px}}
+@media(max-width:600px){body[data-view="home"] .custody-event{padding-inline:0;font-family:Arial,sans-serif;font-weight:600}}
+@media(max-width:600px) and (max-height:650px){body[data-view="home"] .day{padding:.05rem}body[data-view="home"] .number{height:16px;margin-bottom:0;line-height:16px}body[data-view="home"] .day-add{min-height:16px;height:16px;line-height:1;font-size:.75rem}body[data-view="home"] .custody-event{padding-block:0;margin-bottom:1px;font-size:.67rem;line-height:1.05}}

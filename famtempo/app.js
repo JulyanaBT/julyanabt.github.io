@@ -3,6 +3,9 @@ import {isCustody,nights,nextDay,eventLabel,validateCustody,addDays,alternatingW
 const $=id=>document.getElementById(id);
 const profile=document.body.dataset.profile;
 const names={jules:'Jules',marine:'Marine',sophie:'Sophie',mathieu:'Mathieu'};
+const parentPalette={jules:['#1d4ed8','#dbeafe'],marine:['#9d174d','#fce7f3'],sophie:['#6d28d9','#ede9fe'],mathieu:['#0f766e','#ccfbf1']};
+function parentColors(key){return parentPalette[key]||['#475569','#e2e8f0']}
+
 const BASE='/famtempo/';
 const API='https://buxlddhjwgqyxxuszmtj.supabase.co';
 const KEY='sb_publishable_1KG-61FmOj1peKXudkh7xA_Ww2oc98N';
@@ -49,7 +52,7 @@ function render(){
  const view=$('calendar-view');view.replaceChildren(option('all','Mon calendrier'),...calendars.map(c=>option(c.id,c.name)));view.value=selected;
  if(!view.value){selected='all';view.value='all'}
  $('filters').replaceChildren();$('calendar-key').replaceChildren();
- for(const c of calendars){const key=document.createElement('span');key.className='legend-item';key.style.setProperty('--event-color',c.color);key.textContent=c.name;$('calendar-key').append(key);const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!hidden.has(c.id);check.onchange=()=>{check.checked?hidden.delete(c.id):hidden.add(c.id);renderCalendar()};label.style.setProperty('--event-color',c.color);label.append(check,' '+c.name);$('filters').append(label)}
+ for(const c of calendars){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=!hidden.has(c.id);check.onchange=()=>{check.checked?hidden.delete(c.id):hidden.add(c.id);renderCalendar()};label.style.setProperty('--event-color',c.color);label.append(check,' '+c.name);$('filters').append(label)}
  $('new-event').disabled=!calendars.some(c=>editable(c)&&!isCustody(c));$('new-custody').disabled=!calendars.some(c=>editable(c)&&isCustody(c));$('new-alternance').disabled=$('new-custody').disabled;$('new-vacation').disabled=$('new-custody').disabled;renderCalendar();
 }
 function visibleEvents(){const ids=new Set(calendars.filter(c=>selected==='all'?!hidden.has(c.id):selected===c.id).map(c=>c.id));return events.filter(e=>ids.has(e.calendar_id))}
@@ -61,7 +64,7 @@ function renderCalendar(){
  const day=i-offset+1,cell=document.createElement('div');cell.className='day';
  if(day<1||day>count){cell.classList.add('empty');grid.append(cell);continue}
  const date=new Date(Date.UTC(year,m,day)).toISOString().slice(0,10),num=document.createElement('div');num.className='number';if(date===new Date().toLocaleDateString('sv-SE'))cell.classList.add('today');const canAdd=calendars.some(c=>editable(c)&&isCustody(c)&&(selected==='all'||selected===c.id));if(canAdd){const add=document.createElement('button');add.type='button';add.className='day-add';add.textContent=day;add.setAttribute('aria-label','Ajouter une garde le '+dateFmt.format(new Date(date)));add.onclick=()=>openEvent(null,{kind:'custody',date});num.append(add)}else num.textContent=day;cell.append(num);
- for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day)){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status;b.style.setProperty('--event-color',c.color);b.textContent=(e.is_exception?'Vacances / exception · ':'')+(isCustody(c)?c.name+' · ':'')+eventLabel(e,c);b.title=c.name+' · '+eventLabel(e,c);b.setAttribute('aria-label',b.title+(e.is_exception?' · Vacances ou exception':''));const full=document.createElement('span');full.className='event-full';full.textContent=b.textContent;const compact=document.createElement('span');compact.className='event-compact';compact.textContent=(e.is_exception?'✦ ':'')+(isCustody(c)?eventLabel(e,c).replace(/^Chez /i,''):e.title);b.replaceChildren(full,compact);b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
+ for(const e of shown.filter(e=>e.first_day<=date&&date<e.end_day).sort((a,b)=>{const ac=calendars.find(c=>c.id===a.calendar_id),bc=calendars.find(c=>c.id===b.calendar_id);return Number(isCustody(bc))-Number(isCustody(ac))||ac.name.localeCompare(bc.name,'fr')})){const c=calendars.find(c=>c.id===e.calendar_id),b=document.createElement('button');b.type='button';b.className='event '+e.status+(isCustody(c)?' custody-event':'');b.style.setProperty('--event-color',isCustody(c)?parentColors(e.custodian)[0]:c.color);if(isCustody(c)){b.style.setProperty('--parent-bg',parentColors(e.custodian)[1]);b.style.setProperty('--parent-ink',parentColors(e.custodian)[0]);}b.textContent=(e.is_exception?'Vacances / exception · ':'')+(isCustody(c)?c.name+' · ':'')+eventLabel(e,c);b.title=c.name+' · '+eventLabel(e,c);b.setAttribute('aria-label',b.title+(e.is_exception?' · Vacances ou exception':''));const full=document.createElement('span');full.className='event-full';full.textContent=b.textContent;const compact=document.createElement('span');compact.className='event-compact';compact.textContent=(isCustody(c)?c.name:e.title);if(e.is_exception)b.classList.add('holiday');b.replaceChildren(full,compact);b.onclick=()=>openEvent(e);cell.append(b)}grid.append(cell);
  }
  const start=new Date(Date.UTC(year,m,1)).toISOString().slice(0,10),end=new Date(Date.UTC(year,m+1,1)).toISOString().slice(0,10);
  const list=$('agenda');list.replaceChildren();
@@ -69,6 +72,12 @@ function renderCalendar(){
  if(!monthly.length){const p=document.createElement('p');p.className='muted';p.textContent='Aucun événement ce mois-ci. Ajoute une proposition pour tester la synchronisation.';list.append(p)}
  for(const e of monthly){const c=calendars.find(c=>c.id===e.calendar_id),wrap=document.createElement('div'),b=document.createElement('button');wrap.className='agenda-item';b.textContent=dateFmt.format(new Date(e.first_day))+' – '+dateFmt.format(new Date(e.end_day))+' · '+c.name+' · '+eventLabel(e,c)+(isCustody(c)?' · '+nights(e.first_day,e.end_day)+' nuit'+(nights(e.first_day,e.end_day)>1?'s':''):'')+(e.is_exception?' · Vacances / exception':'')+' · '+(e.status==='confirmed'?'Confirmé':'Proposé');b.onclick=()=>openEvent(e);wrap.append(b);list.append(wrap)}
  $('filters').hidden=selected!=='all';
+ const legend=$('calendar-key');legend.replaceChildren();
+ const activeCalendars=calendars.filter(c=>selected==='all'?!hidden.has(c.id):selected===c.id),parents=new Map();
+ for(const c of activeCalendars.filter(isCustody))for(const [key,name]of Object.entries(c.custody_parents))parents.set(key,name);
+ for(const [key,name]of parents){const item=document.createElement('span');item.className='legend-item parent-legend';item.style.setProperty('--event-color',parentColors(key)[0]);item.textContent='Chez '+name;legend.append(item)}
+ for(const c of activeCalendars.filter(c=>!isCustody(c))){const item=document.createElement('span');item.className='legend-item other-legend';item.style.setProperty('--event-color',c.color);item.textContent=c.name;legend.append(item)}
+
 }
 let formCanEdit=false;
 function formCalendar(){return calendars.find(c=>c.id===$('event-calendar').value)}
